@@ -1,0 +1,28 @@
+.navbar-default .navbar-nav {
+    font-family: 'Avenir Medium', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.navbar-brand {
+    font-family: 'Avenir Medium', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+h2 {
+    font-family: 'Avenir Book', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    text-transform: uppercase;
+}
+
+p {
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+li {
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+
+.divider {
+    border-color: #333;
+    border-bottom: 1px solid #333;
+    width: 50px;
+    margin: 10px 0 20px 0
+}
