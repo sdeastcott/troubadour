@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Troubadour</string>
+    <string name="testPreferencesButton">Enter Preferences</string>
+    <string name="title_activity_preference">PreferenceActivity</string>
 </resources>

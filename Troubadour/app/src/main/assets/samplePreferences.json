@@ -1,0 +1,13 @@
+{
+  "preferences":[
+      {"prefName": "Jay-Z",
+        "prefSeed": 1234561236
+      },
+      {"prefName": "Lil-Wayne",
+        "prefSeed": 2136812398
+      },
+      {"prefName": "Adele",
+        "prefSeed": 815389238
+      }
+    ]
+}

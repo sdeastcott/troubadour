@@ -10,8 +10,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.troubadour.troubadour.MainActivity">
 
-    <TextView
+    <Button
+        android:text="@string/testPreferencesButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/enterPreferencesButton" />
 </RelativeLayout>
