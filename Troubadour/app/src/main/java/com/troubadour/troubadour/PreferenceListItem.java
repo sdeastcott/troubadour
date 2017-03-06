@@ -1,4 +1,4 @@
-package com.troubadour.troubadour.TroubadourUser;
+package com.troubadour.troubadour;
 
 /**
  * Created by James on 3/4/2017.

@@ -5,24 +5,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.troubadour.troubadour.R;
-import com.troubadour.troubadour.TroubadourUser.PreferenceListItem;
+import com.troubadour.troubadour.PreferenceListItem;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
  * Created by James on 3/4/2017.
+ */
+/*
+Cant really explain much on this class, basically just defining a custom adapter from an ArrayList.
+There are a lot of default methods that we don't use often but the key one is "getView" and sometimes updateAdapter
+
+A custom adapter will allow you to configure a list row special ways.
  */
 
 public class PreferenceListAdapter extends ArrayAdapter<PreferenceListItem>{
@@ -58,14 +55,15 @@ public class PreferenceListAdapter extends ArrayAdapter<PreferenceListItem>{
 
         }
 
-        public void udpateAdapter(ArrayList<PreferenceListItem> _lPreferenceListItem){
+        public void updateAdapter(ArrayList<PreferenceListItem> _lPreferenceListItem){
             lPreferenceListItem = _lPreferenceListItem;
             notifyDataSetChanged();
         }
 
+        //This describes what data is going where within our ListRow View
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            LayoutInflater lInflater = LayoutInflater.from(getContext());
+            LayoutInflater lInflater = LayoutInflater.from(lContext);
             customView = lInflater.inflate(R.layout.custom_preference_list_row,parent,false);
 
             PreferenceListItem preferenceListItem = getItem(position);
@@ -77,7 +75,6 @@ public class PreferenceListAdapter extends ArrayAdapter<PreferenceListItem>{
             customView.setTag(preferenceListItem.getPrefSeed());
 
             return customView;
-
         }
 
         @Override

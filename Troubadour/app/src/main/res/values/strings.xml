@@ -2,4 +2,8 @@
     <string name="app_name">Troubadour</string>
     <string name="testPreferencesButton">Enter Preferences</string>
     <string name="title_activity_preference">PreferenceActivity</string>
+    <string name="title_activity_create_preference">CreatePreferenceActivity</string>
+    <string name="prefNameLabel">Preference Name</string>
+    <string name="prefSeedLabel">Preference Seed</string>
+    <string name="create">Create</string>
 </resources>

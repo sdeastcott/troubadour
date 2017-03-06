@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.troubadour.troubadour.Activities.CreatePreferenceActivity"
+    tools:showIn="@layout/activity_create_preference">
+
+        <Button
+            android:id="@+id/createPreferenceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="149dp"
+            android:text="@string/create" />
+
+        <TextView
+            android:id="@+id/prefNameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="27dp"
+            android:layout_marginRight="27dp"
+            android:layout_marginTop="43dp"
+            android:layout_toLeftOf="@+id/prefNameEditText"
+            android:layout_toStartOf="@+id/prefNameEditText"
+            android:text="@string/prefNameLabel" />
+
+        <TextView
+            android:id="@+id/prefSeedLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/prefNameLabel"
+            android:layout_alignStart="@+id/prefNameLabel"
+            android:layout_below="@+id/prefNameEditText"
+            android:layout_marginTop="41dp"
+            android:text="@string/prefSeedLabel" />
+
+        <EditText
+            android:id="@+id/prefNameEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/prefNameLabel"
+            android:layout_alignBottom="@+id/prefNameLabel"
+            android:layout_alignLeft="@+id/createPreferenceButton"
+            android:layout_alignStart="@+id/createPreferenceButton"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/prefSeedEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/prefSeedLabel"
+            android:layout_alignBottom="@+id/prefSeedLabel"
+            android:layout_alignLeft="@+id/prefNameEditText"
+            android:layout_alignStart="@+id/prefNameEditText"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+</RelativeLayout>
