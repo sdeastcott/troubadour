@@ -1,13 +1,25 @@
 package com.troubadour.troubadour.Activities;
 
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.preference.PreferenceActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.troubadour.troubadour.PreferenceListItem;
 import com.troubadour.troubadour.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initUI();
+        displaySecret();
     }
 
 
@@ -31,5 +44,48 @@ public class MainActivity extends AppCompatActivity {
             }
          });
     }
+    public void displaySecret(){
 
+        // Reading json file from assets folder
+        BufferedReader br = null;
+        InputStream is;
+        AssetManager as;
+        String temp;
+        String input = "";
+        try {
+
+            //retrieves file from the assets folder
+            as = getBaseContext().getAssets();
+            is = as.open("troubadourAPI.secret");
+            br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
+            while ((temp = br.readLine()) != null)
+                input += temp;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if ((br != null)) {
+                try {
+                    br.close(); // stop reading
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        try{
+
+            JSONObject jsonResponse = new JSONObject(input);
+            JSONArray jsonMainNode = jsonResponse.optJSONArray("spotifyAppCred");
+
+            //Display first Secret
+                JSONObject jsonChildNode = jsonMainNode.getJSONObject(0);
+                String cID= jsonChildNode.optString("ClientID");
+                String cSecret= jsonChildNode.optString("ClientSecret");
+                Toast.makeText(this, "ClientID: '" +cID+ "' | ClientSecret: '" + cSecret, Toast.LENGTH_LONG).show();
+
+        }
+        catch(JSONException e){
+            Toast.makeText(this, "Error"+e.toString(), Toast.LENGTH_SHORT).show();
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package com.troubadour.troubadour.TroubadourUser;
 
+import java.util.List;
+
 /**
  * Created by James on 3/4/2017.
  */
@@ -7,8 +9,20 @@ package com.troubadour.troubadour.TroubadourUser;
 public class TroubadourUser {
 
     private String troubadourID;
-    private TroubadourPreferences userPreferences;
-    private TroubadourLocation userLocation;
+    private String userLocation;
+    private List<SpotifyObject> userPreferencesSeeds;
+
+    public List<SpotifyObject> getUserPreferencesSeeds() {
+        return userPreferencesSeeds;
+    }
+
+    public void setUserPreferencesSeeds(List<SpotifyObject> userPreferencesSeeds) {
+        this.userPreferencesSeeds = userPreferencesSeeds;
+    }
+
+    public void addUserPreference(SpotifyObject newObject){
+        userPreferencesSeeds.add(newObject);
+    }
 
     public String getTroubadourID(){
         return troubadourID;
@@ -17,24 +31,5 @@ public class TroubadourUser {
     public void setTroubadourID(String id){
         troubadourID = id;
     }
-
-    public TroubadourPreferences getUserPreferences(){
-        return userPreferences;
-    }
-
-    public void setUserPreferences(TroubadourPreferences pref){
-        userPreferences = pref;
-    }
-
-    public TroubadourLocation getUserLocation(){
-        return userLocation;
-    }
-
-    public void setUserLocation(TroubadourLocation location){
-        userLocation = location;
-    }
-
-
-
 
 }
