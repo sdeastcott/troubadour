@@ -35,7 +35,6 @@ dependencies {
     compile(name: 'spotify-player-24-noconnect-2.20b', ext: 'aar')
 
     compile 'com.github.kaaes:spotify-web-api-android:0.4.1'
-
     //custom end
 
 

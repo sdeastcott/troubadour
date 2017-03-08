@@ -9,56 +9,37 @@
     tools:showIn="@layout/activity_create_preference">
 
         <Button
-            android:id="@+id/createPreferenceButton"
+            android:id="@+id/prefSearchButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="149dp"
-            android:text="@string/create" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/prefSearchEditText"
+            android:layout_marginLeft="13dp"
+            android:layout_marginStart="13dp"
+            android:layout_toRightOf="@+id/prefSearchEditText"
+            android:text="@string/Search" />
 
-        <TextView
-            android:id="@+id/prefNameLabel"
+        <EditText
+            android:id="@+id/prefSearchEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
             android:layout_alignParentTop="true"
-            android:layout_marginEnd="27dp"
-            android:layout_marginRight="27dp"
-            android:layout_marginTop="43dp"
-            android:layout_toLeftOf="@+id/prefNameEditText"
-            android:layout_toStartOf="@+id/prefNameEditText"
-            android:text="@string/prefNameLabel" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="18dp" />
 
-        <TextView
-            android:id="@+id/prefSeedLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/prefNameLabel"
-            android:layout_alignStart="@+id/prefNameLabel"
-            android:layout_below="@+id/prefNameEditText"
-            android:layout_marginTop="41dp"
-            android:text="@string/prefSeedLabel" />
-
-        <EditText
-            android:id="@+id/prefNameEditText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/prefNameLabel"
-            android:layout_alignBottom="@+id/prefNameLabel"
-            android:layout_alignLeft="@+id/createPreferenceButton"
-            android:layout_alignStart="@+id/createPreferenceButton"
-            android:ems="10"
-            android:inputType="textPersonName" />
-
-        <EditText
-            android:id="@+id/prefSeedEditText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/prefSeedLabel"
-            android:layout_alignBottom="@+id/prefSeedLabel"
-            android:layout_alignLeft="@+id/prefNameEditText"
-            android:layout_alignStart="@+id/prefNameEditText"
-            android:ems="10"
-            android:inputType="textPersonName" />
+        <ListView
+            android:id="@+id/prefSearchResultsListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/prefSearchEditText"
+            android:layout_marginTop="10dp" />
 
 </RelativeLayout>
