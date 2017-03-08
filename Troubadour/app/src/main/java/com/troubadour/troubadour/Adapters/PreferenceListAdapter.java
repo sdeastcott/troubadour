@@ -75,7 +75,7 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
             String sObjectType = getItem(position).getSpotifyType();
             LayoutInflater lInflater = LayoutInflater.from(lContext);
 
-            if(sObjectType == "album"){
+            if(sObjectType.equals("album")){
                 customView = lInflater.inflate(R.layout.custom_album_list_row,parent,false);
                 TextView albumNameView = (TextView) customView.findViewById(R.id.albumListRowNameView);
                 ImageView albumImageView = (ImageView) customView.findViewById(R.id.albumListRowImageView);
@@ -85,14 +85,14 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
                 DownloadImageTask albumImageTask = new DownloadImageTask(albumImageView,sObject.getSpotifyImages()[2]);
                 albumImageTask.execute();
                 customView.setTag(sObject.getSpotifyID());
-            }else if(sObjectType == "track"){
+            }else if(sObjectType.equals("track")){
                 customView = lInflater.inflate(R.layout.custom_track_list_row,parent,false);
                 TextView trackNameView = (TextView) customView.findViewById(R.id.trackListRowNameView);
 
                 trackNameView.setText(sObject.getSpotifyName());
                 customView.setTag(sObject.getSpotifyID());
-            }else if(sObjectType == "artist"){
-                customView = lInflater.inflate(R.layout.custom_artist_list_row,parent,false);
+            }else if(sObjectType.equals("artist")) {
+                customView = lInflater.inflate(R.layout.custom_artist_list_row, parent, false);
                 TextView artistNameView = (TextView) customView.findViewById(R.id.artistListRowNameView);
                 ImageView artistImageView = (ImageView) customView.findViewById(R.id.artistListRowImageView);
 
@@ -101,6 +101,12 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
                 DownloadImageTask artistImageTask = new DownloadImageTask(artistImageView, sObject.getSpotifyImages()[2]);
                 artistImageTask.execute();
                 customView.setTag(sObject.getSpotifyID());
+            }else if(sObjectType.equals("display")) {
+                customView = lInflater.inflate(R.layout.custom_displayobjecttype_list_row, parent, false);
+                TextView displayTypeNameView = (TextView) customView.findViewById(R.id.displayListRowNameView);
+
+                displayTypeNameView.setText(sObject.getSpotifyName());
+                customView.setTag(sObject.getSpotifyName());
             }else{
                 customView = lInflater.inflate(R.layout.custom_preference_list_row,parent,false);
                 customView.setTag(sObject.getSpotifyID());

@@ -72,8 +72,10 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Dismisses Keyboard
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(queryEdit.getWindowToken(), 0);
+
                 String query = queryEdit.getText().toString();
                 QueryPreferences qPreferences = new QueryPreferences(query);
                 qPreferences.execute();
@@ -85,64 +87,78 @@ public class CreatePreferenceActivity extends AppCompatActivity {
     //Convert jsonObject to SpotifyObject then adds to a ListArray<SpotifyObject>
     //Sets Adapter to the ListArray<SpotifyObject>
     public void updateListView(JSONObject jsonObject){
+        preferenceListItemArrayList = new ArrayList<>();
         prefList = (ListView) findViewById(R.id.prefSearchResultsListView);
 
        try {
+            SpotifyObject displayObject = null;
             String id = "";
             String name = "";
             String uri = "";
             String[] images = new String[3];
 
-            JSONArray jData = jsonObject.getJSONArray("data");
+            JSONObject jData = jsonObject.getJSONObject("data");
             JSONArray jArtists = jData.getJSONArray("artists");
             JSONArray jTracks = jData.getJSONArray("tracks");
             JSONArray jAlbums = jData.getJSONArray("albums");
+
+            displayObject = new SpotifyObject("","","","display",null,"Artists");
+            preferenceListItemArrayList.add(displayObject);
 
             //Artists
             for (int i = 0; i < jArtists.length(); i++) {
                 JSONObject pref = jArtists.getJSONObject(i);
                 String type = pref.getString("type");
-                if (type == "album") {
-                    id = pref.getString("spotify_id");
-                    name = pref.getString("name");
-                    JSONArray tempArr = pref.getJSONArray("images");
+                id = pref.getString("spotify_id");
+                name = pref.getString("name");
+                JSONArray tempArr = pref.getJSONArray("images");
+                if(tempArr.length() > 0) {
                     for (int j = 0; j < 3; j++) {
                         images[j] = tempArr.getJSONObject(j).getString("url");
                     }
-                    uri = pref.getString("uri");
                 }
+                uri = pref.getString("uri");
 
                 SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name);
+                preferenceListItemArrayList.add(spotObject);
+                images = new String[3];
             }
+            displayObject = new SpotifyObject("","","","display",null,"Tracks");
+            preferenceListItemArrayList.add(displayObject);
 
             //Tracks
             for (int i = 0; i < jTracks.length(); i++) {
                 JSONObject pref = jTracks.getJSONObject(i);
                 String type = pref.getString("type");
-                if (type == "album") {
-                    id = pref.getString("spotify_id");
-                    name = pref.getString("name");
-                    uri = pref.getString("uri");
-                }
+                id = pref.getString("spotify_id");
+                name = pref.getString("name");
+                uri = pref.getString("uri");
 
                 SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name);
+                preferenceListItemArrayList.add(spotObject);
             }
+
+            displayObject = new SpotifyObject("","","","display",null,"Albums");
+            preferenceListItemArrayList.add(displayObject);
+
 
             //Albums
             for (int i = 0; i < jAlbums.length(); i++) {
                 JSONObject pref = jAlbums.getJSONObject(i);
                 String type = pref.getString("type");
-                if (type == "album") {
-                    id = pref.getString("spotify_id");
-                    name = pref.getString("name");
-                    JSONArray tempArr = pref.getJSONArray("images");
+                id = pref.getString("spotify_id");
+                name = pref.getString("name");
+                JSONArray tempArr = pref.getJSONArray("images");
+                if(tempArr.length() > 0) {
                     for (int j = 0; j < 3; j++) {
                         images[j] = tempArr.getJSONObject(j).getString("url");
                     }
-                    uri = pref.getString("uri");
                 }
+                uri = pref.getString("uri");
 
                 SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name);
+                preferenceListItemArrayList.add(spotObject);
+                images = new String[3];
             }
         }catch(JSONException e){
             e.printStackTrace();
