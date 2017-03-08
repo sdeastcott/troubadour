@@ -1,7 +1,8 @@
 package com.troubadour.troubadour.Activities;
 import com.troubadour.troubadour.Adapters.PreferenceListAdapter;
+import com.troubadour.troubadour.CustomClasses.SpotifyObject;
 import com.troubadour.troubadour.R;
-import com.troubadour.troubadour.PreferenceListItem;
+import com.troubadour.troubadour.CustomClasses.PreferenceListItem;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 public class PreferenceActivity extends AppCompatActivity {
 
     ListView lView;
-    ArrayList<PreferenceListItem> preferenceListItems = new ArrayList<>();
+    ArrayList<SpotifyObject> preferenceListItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +95,8 @@ public class PreferenceActivity extends AppCompatActivity {
                 JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
                 String name = jsonChildNode.optString("prefName");
                 String seed = jsonChildNode.optString("prefSeed");
-                PreferenceListItem tempPref = new PreferenceListItem(name, seed);
-                preferenceListItems.add(tempPref);
+                SpotifyObject sObject = new SpotifyObject("","",seed,"track",null,name);
+                preferenceListItems.add(sObject);
             }
 
         }

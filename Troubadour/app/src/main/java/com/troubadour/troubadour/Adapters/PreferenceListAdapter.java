@@ -1,15 +1,22 @@
 package com.troubadour.troubadour.Adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.troubadour.troubadour.R;
-import com.troubadour.troubadour.PreferenceListItem;
+import com.troubadour.troubadour.CustomClasses.SpotifyObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 /**
@@ -22,15 +29,15 @@ There are a lot of default methods that we don't use often but the key one is "g
 A custom adapter will allow you to configure a list row special ways.
  */
 
-public class PreferenceListAdapter extends ArrayAdapter<PreferenceListItem>{
+public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
 
         View customView;
         private Context lContext;
-        private ArrayList<PreferenceListItem> lPreferenceListItem;
+        private ArrayList<SpotifyObject> lPreferenceListItem;
         private int lTextViewResourceId;
         private static LayoutInflater inflater = null;
 
-        public PreferenceListAdapter(Context context, int textViewResourceId, ArrayList<PreferenceListItem> _lPreferenceListItem) {
+        public PreferenceListAdapter(Context context, int textViewResourceId, ArrayList<SpotifyObject> _lPreferenceListItem) {
             super(context, R.layout.custom_preference_list_row, _lPreferenceListItem);
             lPreferenceListItem = _lPreferenceListItem;
             lContext = context;
@@ -41,8 +48,8 @@ public class PreferenceListAdapter extends ArrayAdapter<PreferenceListItem>{
             return lPreferenceListItem.size();
         }
 
-        public PreferenceListItem getItem(PreferenceListItem position) {
-            return position;
+        public SpotifyObject getItem(int position) {
+            return lPreferenceListItem.get(position);
         }
 
         public long getItemId(int position) {
@@ -55,7 +62,7 @@ public class PreferenceListAdapter extends ArrayAdapter<PreferenceListItem>{
 
         }
 
-        public void updateAdapter(ArrayList<PreferenceListItem> _lPreferenceListItem){
+        public void updateAdapter(ArrayList<SpotifyObject> _lPreferenceListItem){
             lPreferenceListItem = _lPreferenceListItem;
             notifyDataSetChanged();
         }
@@ -63,16 +70,50 @@ public class PreferenceListAdapter extends ArrayAdapter<PreferenceListItem>{
         //This describes what data is going where within our ListRow View
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+
+            SpotifyObject sObject = lPreferenceListItem.get(position);
+            String sObjectType = getItem(position).getSpotifyType();
             LayoutInflater lInflater = LayoutInflater.from(lContext);
-            customView = lInflater.inflate(R.layout.custom_preference_list_row,parent,false);
 
-            PreferenceListItem preferenceListItem = getItem(position);
-            TextView preferenceNameTextView = (TextView) customView.findViewById(R.id.preferenceNameText);
-            TextView preferenceSeedTextView = (TextView) customView.findViewById(R.id.preferenceSeedText);
+            if(sObjectType == "album"){
+                customView = lInflater.inflate(R.layout.custom_album_list_row,parent,false);
+                TextView albumNameView = (TextView) customView.findViewById(R.id.albumListRowNameView);
+                ImageView albumImageView = (ImageView) customView.findViewById(R.id.albumListRowImageView);
 
-            preferenceNameTextView.setText(preferenceListItem.getPrefName());
-            preferenceSeedTextView.setText(preferenceListItem.getPrefSeed());
-            customView.setTag(preferenceListItem.getPrefSeed());
+                //Set text and download the 64x64 res image to set image
+                albumNameView.setText(sObject.getSpotifyName());
+                DownloadImageTask albumImageTask = new DownloadImageTask(albumImageView,sObject.getSpotifyImages()[2]);
+                albumImageTask.execute();
+                customView.setTag(sObject.getSpotifyID());
+            }else if(sObjectType == "track"){
+                customView = lInflater.inflate(R.layout.custom_track_list_row,parent,false);
+                TextView trackNameView = (TextView) customView.findViewById(R.id.trackListRowNameView);
+
+                trackNameView.setText(sObject.getSpotifyName());
+                customView.setTag(sObject.getSpotifyID());
+            }else if(sObjectType == "artist"){
+                customView = lInflater.inflate(R.layout.custom_artist_list_row,parent,false);
+                TextView artistNameView = (TextView) customView.findViewById(R.id.artistListRowNameView);
+                ImageView artistImageView = (ImageView) customView.findViewById(R.id.artistListRowImageView);
+
+                //Set text and download the 64x64 res image to set image
+                artistNameView.setText(sObject.getSpotifyName());
+                DownloadImageTask artistImageTask = new DownloadImageTask(artistImageView, sObject.getSpotifyImages()[2]);
+                artistImageTask.execute();
+                customView.setTag(sObject.getSpotifyID());
+            }else{
+                customView = lInflater.inflate(R.layout.custom_preference_list_row,parent,false);
+                customView.setTag(sObject.getSpotifyID());
+
+                TextView preferenceNameTextView = (TextView) customView.findViewById(R.id.preferenceNameText);
+                TextView preferenceSeedTextView = (TextView) customView.findViewById(R.id.preferenceSeedText);
+
+                preferenceNameTextView.setText(sObject.getSpotifyName());
+                preferenceSeedTextView.setText(sObject.getSpotifyID());
+
+            }
+
+
 
             return customView;
         }
@@ -85,4 +126,47 @@ public class PreferenceListAdapter extends ArrayAdapter<PreferenceListItem>{
         public boolean isEnabled(int arg0){
             return true;
         }
+
+    private class DownloadImageTask extends AsyncTask<Void, Void, Void> {
+        //View lView;
+        private ImageView iView = null;
+        private String imageURL = "";
+        private Bitmap result = null;
+
+        private DownloadImageTask(ImageView imageView, String url){
+            this.iView = imageView;
+            this.imageURL = url;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params){
+
+            try{
+                InputStream in = new java.net.URL(this.imageURL).openStream();
+                result = BitmapFactory.decodeStream(in);
+            }catch(MalformedURLException e) {
+                e.printStackTrace();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+        }
+
+        //@SuppressWarnings({"UnusedDeclaration"})
+        @Override
+        protected void onPostExecute(Void Avoid){
+            iView.setImageBitmap(result);
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values){
+            super.onProgressUpdate(values);
+        }
+
+    }
 }

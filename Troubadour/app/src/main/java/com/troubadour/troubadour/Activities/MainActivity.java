@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.troubadour.troubadour.PreferenceListItem;
 import com.troubadour.troubadour.R;
 
 import org.json.JSONArray;

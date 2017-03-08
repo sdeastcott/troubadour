@@ -1,5 +1,6 @@
 package com.troubadour.troubadour.Activities;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,44 +8,37 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.troubadour.troubadour.APIHandler;
+import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.Adapters.PreferenceListAdapter;
-import com.troubadour.troubadour.PreferenceListItem;
 import com.troubadour.troubadour.R;
+import com.troubadour.troubadour.CustomClasses.SpotifyObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
+/*CreatePreference Activity allows a user to enter new music preferences*/
 public class CreatePreferenceActivity extends AppCompatActivity {
 
-    /* Stub for creating a new preference
-    Need to populate after API and SDK added from Spotify
-     */
-
-    String apiURL = "http://api.troubadour.tk";//search?q=";
+    String apiURL = "https://api.troubadour.tk";//search?q=";
     APIHandler api = new APIHandler();
     ListView prefList;
     PreferenceListAdapter preferenceListAdapter;
-    ArrayList<PreferenceListItem> preferenceListItemArrayList = new ArrayList();
+    ArrayList<SpotifyObject> preferenceListItemArrayList = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,12 +65,15 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         }
     }
 
+    //Initializes UI widgets for the Activity
     public void initUI(){
         final EditText queryEdit = (EditText) findViewById(R.id.prefSearchEditText);
         Button createButton = (Button) findViewById(R.id.prefSearchButton);
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(queryEdit.getWindowToken(), 0);
                 String query = queryEdit.getText().toString();
                 QueryPreferences qPreferences = new QueryPreferences(query);
                 qPreferences.execute();
@@ -84,19 +81,68 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         });
     }
 
-    public void updateListView(JSONArray jsonArray){
-        prefList = (ListView) findViewById(R.id.preferenceListView);
+    //Populates ListView with a given jsonArray
+    //Convert jsonObject to SpotifyObject then adds to a ListArray<SpotifyObject>
+    //Sets Adapter to the ListArray<SpotifyObject>
+    public void updateListView(JSONObject jsonObject){
+        prefList = (ListView) findViewById(R.id.prefSearchResultsListView);
 
-        try {
-            for (int i = 0; i < jsonArray.length(); i++){
-                JSONObject pref = jsonArray.getJSONObject(i);
-                String id = pref.getString("spotifyID");
+       try {
+            String id = "";
+            String name = "";
+            String uri = "";
+            String[] images = new String[3];
+
+            JSONArray jData = jsonObject.getJSONArray("data");
+            JSONArray jArtists = jData.getJSONArray("artists");
+            JSONArray jTracks = jData.getJSONArray("tracks");
+            JSONArray jAlbums = jData.getJSONArray("albums");
+
+            //Artists
+            for (int i = 0; i < jArtists.length(); i++) {
+                JSONObject pref = jArtists.getJSONObject(i);
                 String type = pref.getString("type");
-                String name = pref.getString("name");
-                String uri = pref.getString("uri");
+                if (type == "album") {
+                    id = pref.getString("spotify_id");
+                    name = pref.getString("name");
+                    JSONArray tempArr = pref.getJSONArray("images");
+                    for (int j = 0; j < 3; j++) {
+                        images[j] = tempArr.getJSONObject(j).getString("url");
+                    }
+                    uri = pref.getString("uri");
+                }
 
-                PreferenceListItem prefItem = new PreferenceListItem(name, uri);
-                preferenceListItemArrayList.add(prefItem);
+                SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name);
+            }
+
+            //Tracks
+            for (int i = 0; i < jTracks.length(); i++) {
+                JSONObject pref = jTracks.getJSONObject(i);
+                String type = pref.getString("type");
+                if (type == "album") {
+                    id = pref.getString("spotify_id");
+                    name = pref.getString("name");
+                    uri = pref.getString("uri");
+                }
+
+                SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name);
+            }
+
+            //Albums
+            for (int i = 0; i < jAlbums.length(); i++) {
+                JSONObject pref = jAlbums.getJSONObject(i);
+                String type = pref.getString("type");
+                if (type == "album") {
+                    id = pref.getString("spotify_id");
+                    name = pref.getString("name");
+                    JSONArray tempArr = pref.getJSONArray("images");
+                    for (int j = 0; j < 3; j++) {
+                        images[j] = tempArr.getJSONObject(j).getString("url");
+                    }
+                    uri = pref.getString("uri");
+                }
+
+                SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name);
             }
         }catch(JSONException e){
             e.printStackTrace();
@@ -110,7 +156,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
     private class QueryPreferences extends AsyncTask<Void, Void, Void> {
         //View lView;
         private String apiQuery;
-        JSONArray jArray = null;
+        JSONObject jObject = null;
 
         private QueryPreferences(String url){
             apiQuery = url;
@@ -124,20 +170,10 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 URL url = new URL(apiURL + "/search?q=" + apiQuery);
                 HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
                 Log.e("tag",Integer.toString(httpURLConnection.getResponseCode()));
-                //httpURLConnection.setRequestMethod("GET");
-                httpURLConnection.setDoOutput(true);
-                httpURLConnection.setDoInput(true);
-                OutputStream outputStream = httpURLConnection.getOutputStream();
+                httpURLConnection.setRequestMethod("GET");
 
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                //get_Data = URLEncoder.encode("/search?q=","UTF-8") + URLEncoder.encode(apiQuery,"UTF-8");
-                //bufferedWriter.write(get_Data);
-
-                bufferedWriter.flush();
-                bufferedWriter.close();
-                outputStream.close();
                 InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
                 String line;
                 while((line=bufferedReader.readLine()) != null){
                     result+=line;
@@ -146,7 +182,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 inputStream.close();
                 httpURLConnection.disconnect();
 
-                jArray = encodeJSONArray(result);
+                jObject = encodeJSONArray(result);
 
             }catch(MalformedURLException e) {
                 e.printStackTrace();
@@ -155,49 +191,6 @@ public class CreatePreferenceActivity extends AppCompatActivity {
             }
             return null;
         }
-
-        /*
-        @Override
-        protected Void doInBackground(Void... params){
-            RESTClient
-
-            String result = "";
-            String get_Data = "";
-            try{
-                URL url = new URL(apiURL + "/search?q=" + apiQuery);
-                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-                Log.e("tag",Integer.toString(httpURLConnection.getResponseCode()));
-                //httpURLConnection.setRequestMethod("GET");
-                httpURLConnection.setDoOutput(true);
-                httpURLConnection.setDoInput(true);
-                OutputStream outputStream = httpURLConnection.getOutputStream();
-
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                //get_Data = URLEncoder.encode("/search?q=","UTF-8") + URLEncoder.encode(apiQuery,"UTF-8");
-                //bufferedWriter.write(get_Data);
-
-                bufferedWriter.flush();
-                bufferedWriter.close();
-                outputStream.close();
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
-                String line;
-                while((line=bufferedReader.readLine()) != null){
-                    result+=line;
-                }
-                bufferedReader.close();
-                inputStream.close();
-                httpURLConnection.disconnect();
-
-                jArray = encodeJSONArray(result);
-
-            }catch(MalformedURLException e) {
-                e.printStackTrace();
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-            return null;
-        }*/
 
         @Override
         protected void onPreExecute(){
@@ -207,7 +200,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         //@SuppressWarnings({"UnusedDeclaration"})
         @Override
         protected void onPostExecute(Void Avoid){
-            updateListView(jArray);
+            updateListView(jObject);
         }
 
         @Override
@@ -215,16 +208,16 @@ public class CreatePreferenceActivity extends AppCompatActivity {
             super.onProgressUpdate(values);
         }
 
-        private JSONArray encodeJSONArray(String unencodedJSON){
-            JSONArray jsonArray = null;
+        private JSONObject encodeJSONArray(String rawJson){
+            JSONObject jsonObject= null;
             try {
-                jsonArray = new JSONArray(unencodedJSON);
+                jsonObject = new JSONObject(rawJson);
             }
             catch(JSONException e){
-                Log.e("JSON Parse","Result: " + unencodedJSON + "|Error parsing data: " + e.toString());
+                Log.e("JSON Parse","Result: " + rawJson + "|Error parsing data: " + e.toString());
             }
 
-            return jsonArray;
+            return jsonObject;
         }
 
     }

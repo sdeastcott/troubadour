@@ -7,4 +7,5 @@
     <string name="prefSeedLabel">Preference Seed</string>
     <string name="create">Create</string>
     <string name="Search">Search</string>
+    <string name="listRowAlbumImageDescription">A Placeholder for the Album Artwork</string>
 </resources>

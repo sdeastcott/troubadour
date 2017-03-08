@@ -1,5 +1,7 @@
 package com.troubadour.troubadour.TroubadourUser;
 
+import com.troubadour.troubadour.CustomClasses.SpotifyObject;
+
 import java.util.List;
 
 /**
