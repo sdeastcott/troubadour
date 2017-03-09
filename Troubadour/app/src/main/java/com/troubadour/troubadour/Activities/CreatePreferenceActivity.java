@@ -34,7 +34,7 @@ import java.util.ArrayList;
 /*CreatePreference Activity allows a user to enter new music preferences*/
 public class CreatePreferenceActivity extends AppCompatActivity {
 
-    String apiURL = "https://api.troubadour.tk";//search?q=";
+    String apiURL = "https://api.troubadour.tk";
     APIHandler api = new APIHandler();
     ListView prefList;
     PreferenceListAdapter preferenceListAdapter;
@@ -168,9 +168,9 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         prefList.setAdapter(preferenceListAdapter);
     }
 
-
+    //Async Task class that performs the query 'inBackground' and updates the Preferences ListView 'onPostExecute'
     private class QueryPreferences extends AsyncTask<Void, Void, Void> {
-        //View lView;
+
         private String apiQuery;
         JSONObject jObject = null;
 

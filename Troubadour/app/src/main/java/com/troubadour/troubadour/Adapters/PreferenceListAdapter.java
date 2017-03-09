@@ -56,12 +56,7 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
             return position;
         }
 
-        public static class ViewHolder {
-            public TextView display_name;
-            public TextView display_number;
-
-        }
-
+        //Used to update the adapter with a new ArrayList<SpotifyObject>
         public void updateAdapter(ArrayList<SpotifyObject> _lPreferenceListItem){
             lPreferenceListItem = _lPreferenceListItem;
             notifyDataSetChanged();
@@ -133,8 +128,10 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
             return true;
         }
 
+    //Async task class that is constructed with the ImageView to be rendered and the Source URL for the Image
+    //Downloads the Bitmap for the image through the URL
     private class DownloadImageTask extends AsyncTask<Void, Void, Void> {
-        //View lView;
+
         private ImageView iView = null;
         private String imageURL = "";
         private Bitmap result = null;

@@ -2,7 +2,7 @@ package com.troubadour.troubadour.Activities;
 import com.troubadour.troubadour.Adapters.PreferenceListAdapter;
 import com.troubadour.troubadour.CustomClasses.SpotifyObject;
 import com.troubadour.troubadour.R;
-import com.troubadour.troubadour.CustomClasses.PreferenceListItem;
+
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
@@ -38,7 +38,7 @@ public class PreferenceActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Create Preference Activity
+                //Create and Start CreatePreferenceActivity
                 Intent preferenceIntent = new Intent(PreferenceActivity.this, CreatePreferenceActivity.class);
                 preferenceIntent.setClassName("com.troubadour.troubadour","com.troubadour.troubadour.Activities.CreatePreferenceActivity");
                 PreferenceActivity.this.startActivity(preferenceIntent);
@@ -48,6 +48,7 @@ public class PreferenceActivity extends AppCompatActivity {
         initUI();
     }
 
+    //Initializes the UI Widgets in the Activity
     public void initUI(){
 
         readStaticJSON();
@@ -57,6 +58,7 @@ public class PreferenceActivity extends AppCompatActivity {
         lView.setAdapter(lAdapter);
     }
 
+    //Statically reads a local JSON file, creates SpotifyObjects and adds them to the PreferencesListView
     public void readStaticJSON(){
 
         // Reading json file from assets folder

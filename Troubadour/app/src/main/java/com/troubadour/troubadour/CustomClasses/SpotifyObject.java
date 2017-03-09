@@ -4,6 +4,7 @@ package com.troubadour.troubadour.CustomClasses;
  * Created by BBKiel on 3/6/2017.
  */
 
+//SpotifyObject is the class that contains all needed data for an Artist,Album,Genre,Playlist and Track
 public class SpotifyObject {
 
     private String spotifyURI; //spotify:track:6rqhFgbbKwnb9MLmUQDhG6

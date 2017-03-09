@@ -2,6 +2,7 @@ package com.troubadour.troubadour.TroubadourUser;
 
 import com.troubadour.troubadour.CustomClasses.SpotifyObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,13 +13,13 @@ public class TroubadourUser {
 
     private String troubadourID;
     private String userLocation;
-    private List<SpotifyObject> userPreferencesSeeds;
+    private ArrayList<SpotifyObject> userPreferencesSeeds = new ArrayList<>();
 
-    public List<SpotifyObject> getUserPreferencesSeeds() {
+    public ArrayList<SpotifyObject> getUserPreferencesSeeds() {
         return userPreferencesSeeds;
     }
 
-    public void setUserPreferencesSeeds(List<SpotifyObject> userPreferencesSeeds) {
+    public void setUserPreferencesSeeds(ArrayList<SpotifyObject> userPreferencesSeeds) {
         this.userPreferencesSeeds = userPreferencesSeeds;
     }
 
