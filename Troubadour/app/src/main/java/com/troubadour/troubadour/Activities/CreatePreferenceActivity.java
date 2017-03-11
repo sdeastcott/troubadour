@@ -3,8 +3,10 @@ package com.troubadour.troubadour.Activities;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.text.TextUtilsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +14,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.Adapters.PreferenceListAdapter;
 import com.troubadour.troubadour.R;
@@ -73,9 +77,13 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(queryEdit.getWindowToken(), 0);
 
-                String query = queryEdit.getText().toString();
-                QueryPreferences qPreferences = new QueryPreferences(query);
-                qPreferences.execute();
+                if(TextUtils.isEmpty(queryEdit.getText())){
+                    Toast.makeText(getBaseContext(), "Please enter a valid search", Toast.LENGTH_LONG).show();
+                }else {
+                    String query = queryEdit.getText().toString();
+                    QueryPreferences qPreferences = new QueryPreferences(query);
+                    qPreferences.execute();
+                }
             }
         });
     }
