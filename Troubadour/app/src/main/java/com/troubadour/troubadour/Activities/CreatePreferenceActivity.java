@@ -99,8 +99,10 @@ public class CreatePreferenceActivity extends AppCompatActivity {
             JSONArray jTracks = jData.getJSONArray("tracks");
             JSONArray jAlbums = jData.getJSONArray("albums");
 
-            displayObject = new SpotifyObject("","","","display",null,"Artists");
-            preferenceListItemArrayList.add(displayObject);
+            if(jArtists.length() > 0) {
+                displayObject = new SpotifyObject("", "", "", "display", null, "Artists");
+                preferenceListItemArrayList.add(displayObject);
+            }
 
             //Artists
             for (int i = 0; i < jArtists.length(); i++) {
@@ -120,8 +122,11 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 preferenceListItemArrayList.add(spotObject);
                 images = new String[3];
             }
-            displayObject = new SpotifyObject("","","","display",null,"Tracks");
-            preferenceListItemArrayList.add(displayObject);
+
+            if(jTracks.length() > 0) {
+                displayObject = new SpotifyObject("", "", "", "display", null, "Tracks");
+                preferenceListItemArrayList.add(displayObject);
+            }
 
             //Tracks
             for (int i = 0; i < jTracks.length(); i++) {
@@ -135,9 +140,10 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 preferenceListItemArrayList.add(spotObject);
             }
 
-            displayObject = new SpotifyObject("","","","display",null,"Albums");
-            preferenceListItemArrayList.add(displayObject);
-
+            if(jAlbums.length() > 0) {
+                displayObject = new SpotifyObject("", "", "", "display", null, "Albums");
+                preferenceListItemArrayList.add(displayObject);
+            }
 
             //Albums
             for (int i = 0; i < jAlbums.length(); i++) {
@@ -157,6 +163,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 preferenceListItemArrayList.add(spotObject);
                 images = new String[3];
             }
+
         }catch(JSONException e){
             e.printStackTrace();
         }
