@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -27,6 +28,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -178,6 +180,13 @@ public class CreatePreferenceActivity extends AppCompatActivity {
 
         preferenceListAdapter = new PreferenceListAdapter(this,R.layout.activity_preference, preferenceListItemArrayList);
         prefList.setAdapter(preferenceListAdapter);
+        prefList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                PostNewPreference newPref = new PostNewPreference(position);
+                newPref.execute();
+            }
+        });
     }
 
     //Async Task class that performs the query 'inBackground' and updates the Preferences ListView 'onPostExecute'
@@ -250,4 +259,84 @@ public class CreatePreferenceActivity extends AppCompatActivity {
 
     }
 
+    //Async Task class that performs the query 'inBackground' and updates the Preferences ListView 'onPostExecute'
+    private class PostNewPreference extends AsyncTask<Void, Void, Void> {
+
+        private int selectedPref;
+        private SpotifyObject selectedSpotifyObject;
+        private JSONObject jObject = null;
+
+        private PostNewPreference(int position){
+            selectedPref = position;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params){
+            String result = "";
+            String get_Data = "";
+            try{
+                selectedSpotifyObject = preferenceListItemArrayList.get(selectedPref);
+                URL url = new URL(apiURL + "/preference");
+                //url.?q=" + selectedSpotifyObject.getSpotifyURI());
+                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+                JSONObject body = new JSONObject();
+                body.put("spotifyURI",selectedSpotifyObject.getSpotifyURI());
+                OutputStreamWriter wr = new OutputStreamWriter(httpURLConnection.getOutputStream());
+                wr.write(body.toString());
+
+                Log.e("tag",Integer.toString(httpURLConnection.getResponseCode()));
+                httpURLConnection.setRequestMethod("POST");
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                String line;
+                while((line=bufferedReader.readLine()) != null){
+                    result+=line;
+                }
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+                Log.e("response:", result);
+
+                //jObject = encodeJSONArray(result);
+
+            }catch(MalformedURLException e) {
+                e.printStackTrace();
+            }catch(IOException e){
+                e.printStackTrace();
+            }catch(JSONException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+        }
+
+        //@SuppressWarnings({"UnusedDeclaration"})
+        @Override
+        protected void onPostExecute(Void Avoid){
+            updateListView(jObject);
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values){
+            super.onProgressUpdate(values);
+        }
+
+        private JSONObject encodeJSONArray(String rawJson){
+            JSONObject jsonObject= null;
+            try {
+                jsonObject = new JSONObject(rawJson);
+            }
+            catch(JSONException e){
+                Log.e("JSON Parse","Result: " + rawJson + "|Error parsing data: " + e.toString());
+            }
+
+            return jsonObject;
+        }
+
+    }
 }
