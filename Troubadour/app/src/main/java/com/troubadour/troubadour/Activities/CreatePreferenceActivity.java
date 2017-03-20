@@ -3,6 +3,7 @@ package com.troubadour.troubadour.Activities;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.text.TextUtilsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -33,6 +34,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+
+import static java.security.AccessController.getContext;
 
 /*CreatePreference Activity allows a user to enter new music preferences*/
 public class CreatePreferenceActivity extends AppCompatActivity {
@@ -263,11 +266,13 @@ public class CreatePreferenceActivity extends AppCompatActivity {
     private class PostNewPreference extends AsyncTask<Void, Void, Void> {
 
         private int selectedPref;
+        private String android_id;
         private SpotifyObject selectedSpotifyObject;
         private JSONObject jObject = null;
 
         private PostNewPreference(int position){
             selectedPref = position;
+            android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         }
 
         @Override
@@ -276,16 +281,24 @@ public class CreatePreferenceActivity extends AppCompatActivity {
             String get_Data = "";
             try{
                 selectedSpotifyObject = preferenceListItemArrayList.get(selectedPref);
-                URL url = new URL(apiURL + "/preference");
-                //url.?q=" + selectedSpotifyObject.getSpotifyURI());
-                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-                JSONObject body = new JSONObject();
-                body.put("spotifyURI",selectedSpotifyObject.getSpotifyURI());
-                OutputStreamWriter wr = new OutputStreamWriter(httpURLConnection.getOutputStream());
-                wr.write(body.toString());
+                URL url = new URL(apiURL + "/preferences");
 
-                Log.e("tag",Integer.toString(httpURLConnection.getResponseCode()));
-                httpURLConnection.setRequestMethod("POST");
+                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+                httpURLConnection.setRequestProperty("X-USER-ID",android_id);
+                httpURLConnection.setRequestProperty("Content-Type","application/json");
+
+                JSONArray arr = new JSONArray();
+                JSONObject body = new JSONObject();
+                body.put("spotify_uri",selectedSpotifyObject.getSpotifyURI());
+                body.put("name",selectedSpotifyObject.getSpotifyName());
+                Log.e("PUT DEBUG | ","spotify_uri: "+selectedSpotifyObject.getSpotifyURI() + "spotify_name: " + selectedSpotifyObject.getSpotifyName());
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setRequestMethod("PUT");
+                arr.put(body);
+
+                OutputStreamWriter wr = new OutputStreamWriter(httpURLConnection.getOutputStream());
+                wr.write(arr.toString());
+                wr.close();
 
                 InputStream inputStream = httpURLConnection.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
@@ -318,7 +331,8 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         //@SuppressWarnings({"UnusedDeclaration"})
         @Override
         protected void onPostExecute(Void Avoid){
-            updateListView(jObject);
+            //updateListView(jObject);
+            Toast.makeText(getBaseContext(), "Did Something",  Toast.LENGTH_LONG).show();
         }
 
         @Override

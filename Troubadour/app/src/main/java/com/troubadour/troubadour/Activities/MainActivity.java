@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject jsonChildNode = jsonMainNode.getJSONObject(0);
                 String cID= jsonChildNode.optString("ClientID");
                 String cSecret= jsonChildNode.optString("ClientSecret");
-                Toast.makeText(this, "ClientID: '" +cID+ "' | ClientSecret: '" + cSecret, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "ClientID: '" +cID+ "' | ClientSecret: '" + cSecret, Toast.LENGTH_LONG).show();
 
         }
         catch(JSONException e){
