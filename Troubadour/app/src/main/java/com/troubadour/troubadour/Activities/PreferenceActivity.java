@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -61,7 +62,6 @@ public class PreferenceActivity extends AppCompatActivity {
 
         GetUserPreferences userPreferences = new GetUserPreferences(apiURL);
         userPreferences.execute();
-
 
         initUI();
     }
@@ -176,8 +176,8 @@ public class PreferenceActivity extends AppCompatActivity {
 
         }catch(JSONException e) {
             e.printStackTrace();
-            //}catch(NullPointerException e){
-            //e.printStackTrace();
+        }catch(NullPointerException e){
+            e.printStackTrace();
         }
 
         PreferenceListAdapter lAdapter = new PreferenceListAdapter(lView.getContext(), R.layout.content_preference, preferenceListItems);
@@ -242,6 +242,7 @@ public class PreferenceActivity extends AppCompatActivity {
         JSONObject jObject = null;
 
         private GetUserPreferences(String apiURL){
+            preferenceListItems = new ArrayList<SpotifyObject>();
             apiurl = apiURL;
             android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         }
@@ -332,9 +333,11 @@ public class PreferenceActivity extends AppCompatActivity {
                 Log.e("MY androidID: ", android_id);
                 URL url = new URL(apiurl + "/preferences");
                 HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+                httpURLConnection.setDoOutput(true);
                 httpURLConnection.setRequestProperty("X-USER-ID",android_id);
                 httpURLConnection.setRequestProperty("Content-Type","application/json");
-                Log.e("tag",Integer.toString(httpURLConnection.getResponseCode()));
+                httpURLConnection.setRequestMethod("DELETE");
+
 
                 JSONArray arr = new JSONArray();
                 for(int i = 0; i < selectedPreferencesList.size(); i++){
@@ -342,8 +345,11 @@ public class PreferenceActivity extends AppCompatActivity {
                 }
                 Log.e("DELETE DEBUG | ","spotify_uri's: "+selectedPreferencesList.toString());
 
-                httpURLConnection.setDoOutput(true);
-                httpURLConnection.setRequestMethod("DELETE");
+                OutputStreamWriter wr = new OutputStreamWriter(httpURLConnection.getOutputStream());
+                wr.write(arr.toString());
+
+                httpURLConnection.connect();
+                wr.close();
 
                 InputStream inputStream = httpURLConnection.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
@@ -351,6 +357,8 @@ public class PreferenceActivity extends AppCompatActivity {
                 while((line=bufferedReader.readLine()) != null){
                     result+=line;
                 }
+
+                Log.e("tag",Integer.toString(httpURLConnection.getResponseCode()));
                 bufferedReader.close();
                 inputStream.close();
                 httpURLConnection.disconnect();
@@ -373,6 +381,8 @@ public class PreferenceActivity extends AppCompatActivity {
         //@SuppressWarnings({"UnusedDeclaration"})
         @Override
         protected void onPostExecute(Void Avoid){
+            GetUserPreferences userPreferences = new GetUserPreferences(apiURL);
+            userPreferences.execute();
             updateListView(jObject);
         }
 
