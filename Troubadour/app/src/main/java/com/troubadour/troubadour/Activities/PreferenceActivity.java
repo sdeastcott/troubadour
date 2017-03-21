@@ -12,10 +12,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -63,7 +66,13 @@ public class PreferenceActivity extends AppCompatActivity {
         GetUserPreferences userPreferences = new GetUserPreferences(apiURL);
         userPreferences.execute();
 
-        initUI();
+    }
+
+    @Override
+    public void onRestart(){
+        super.onRestart();
+        GetUserPreferences userPreferences = new GetUserPreferences(apiURL);
+        userPreferences.execute();
     }
 
     @Override
@@ -84,6 +93,8 @@ public class PreferenceActivity extends AppCompatActivity {
         if(id == R.id.trashCanPreferenceListActionBar){
             DeleteUserPreferences deleteUserPreferences = new DeleteUserPreferences(selectedPreferenceListItems, apiURL);
             deleteUserPreferences.execute();
+            lView.clearChoices();
+            item.setVisible(false);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -182,14 +193,16 @@ public class PreferenceActivity extends AppCompatActivity {
 
         PreferenceListAdapter lAdapter = new PreferenceListAdapter(lView.getContext(), R.layout.content_preference, preferenceListItems);
         lView.setAdapter(lAdapter);
-        lView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 SpotifyObject selectedItem = preferenceListItems.get(position);
                 if(selectedPreferenceListItems.contains(selectedItem.getSpotifyURI())){
-
+                    lView.setItemChecked(position,false);
+                    selectedPreferenceListItems.remove(selectedItem.getSpotifyURI());
                 }else{
-                    lView.setSelected(true);
+                    lView.setItemChecked(position,true);
                     selectedPreferenceListItems.add(selectedItem.getSpotifyURI());
                 }
 
@@ -200,37 +213,7 @@ public class PreferenceActivity extends AppCompatActivity {
                 }else if((!selectedPreferenceListItems.isEmpty()) & (!item.isVisible())){
                     item.setVisible(true);
                 }
-                return true;
-            }
-        });
-    }
 
-    public void initUI(){
-
-        //readStaticJSON();
-
-        lView = (ListView) findViewById(R.id.preferenceListView);
-        PreferenceListAdapter lAdapter = new PreferenceListAdapter(lView.getContext(), R.layout.content_preference, preferenceListItems);
-        lView.setAdapter(lAdapter);
-        lView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                SpotifyObject selectedItem = preferenceListItems.get(position);
-                if(selectedPreferenceListItems.contains(selectedItem.getSpotifyURI())){
-
-                }else{
-                    lView.setSelected(true);
-                    selectedPreferenceListItems.add(selectedItem.getSpotifyURI());
-                }
-
-                //If the menu item for trash is not visible
-                MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
-                if(selectedPreferenceListItems.isEmpty() & item.isVisible()){
-                    item.setVisible(false);
-                }else if((!selectedPreferenceListItems.isEmpty()) & (!item.isVisible())){
-                    item.setVisible(true);
-                }
-                return true;
             }
         });
     }
@@ -341,7 +324,7 @@ public class PreferenceActivity extends AppCompatActivity {
 
                 JSONArray arr = new JSONArray();
                 for(int i = 0; i < selectedPreferencesList.size(); i++){
-                    arr.put(selectedPreferencesList.indexOf(i));
+                    arr.put(selectedPreferencesList.get(i));
                 }
                 Log.e("DELETE DEBUG | ","spotify_uri's: "+selectedPreferencesList.toString());
 
