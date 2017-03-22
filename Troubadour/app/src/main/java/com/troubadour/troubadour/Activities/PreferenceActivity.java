@@ -1,10 +1,10 @@
 package com.troubadour.troubadour.Activities;
 import com.troubadour.troubadour.Adapters.PreferenceListAdapter;
+import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.CustomClasses.SpotifyObject;
 import com.troubadour.troubadour.R;
 
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -12,16 +12,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +34,7 @@ import java.util.ArrayList;
 
 public class PreferenceActivity extends AppCompatActivity {
 
+    private APIHandler apiHandler;
     private String apiURL = "https://api.troubadour.tk";
     private Menu prefMenu;
     private MenuInflater prefMenuInflater;
@@ -63,9 +61,17 @@ public class PreferenceActivity extends AppCompatActivity {
             }
         });
 
-        GetUserPreferences userPreferences = new GetUserPreferences(apiURL);
-        userPreferences.execute();
+        initUI();
+    }
 
+    public void initUI(){
+        apiHandler = new APIHandler(getApplicationContext());
+        apiHandler.getPreferences(new APIHandler.APICallback() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                updateListView(response);
+            }
+        });
     }
 
     @Override

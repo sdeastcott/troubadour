@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.R;
 
 import org.json.JSONArray;
@@ -43,7 +44,9 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startActivity(preferenceIntent);
             }
          });
+
     }
+
     public void displaySecret(){
 
         // Reading json file from assets folder

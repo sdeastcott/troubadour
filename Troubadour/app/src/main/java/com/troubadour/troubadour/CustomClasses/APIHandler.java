@@ -1,24 +1,25 @@
 package com.troubadour.troubadour.CustomClasses;
 
-import android.os.AsyncTask;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.provider.Settings;
+import android.support.v4.util.ArrayMap;
 import android.util.Log;
+import android.util.LruCache;
+import android.widget.Toast;
 
-import org.json.JSONArray;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.InterruptedIOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.ExecutionException;
+import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 
@@ -28,104 +29,117 @@ import kaaes.spotify.webapi.android.SpotifyApi;
 
 public class APIHandler {
 
-    SpotifyApi api;
-    String apiURL = "https://api.troubadour.tk/";
+    private static APIHandler mInstance;
+    private RequestQueue mRequestQueue;
+    private ImageLoader mImageLoader;
+    private static Context mCtx;
 
-    public APIHandler(){
+    SpotifyApi api;
+    String apiURL = "https://api.troubadour.tk";
+
+    public APIHandler(Context context){
+        mCtx = context;
+        mRequestQueue = getRequestQueue();
+        mImageLoader = new ImageLoader(mRequestQueue, new ImageLoader.ImageCache(){
+            private final LruCache<String,Bitmap>
+                cache = new LruCache<String,Bitmap>(20);
+
+            @Override
+            public Bitmap getBitmap(String url){
+                return cache.get(url);
+            }
+
+            @Override
+            public void putBitmap(String url,Bitmap bitmap){
+                cache.put(url,bitmap);
+            }
+        });
+
         api = new SpotifyApi();
     }
 
-
-    public JSONArray queryPreference(String query){
-        String url = "search?q=" + query;
-        GETCallHelper apiHelper = new GETCallHelper(url);
-        try{
-            return apiHelper.execute().get();
+    public static synchronized APIHandler getmInstance(Context context){
+        if (mInstance == null){
+            mInstance = new APIHandler(context);
         }
-        catch(InterruptedException e){
-            e.printStackTrace();
-            return null;
-        }
-        catch(ExecutionException e){
-            e.printStackTrace();
-            return null;
-        }
+        return mInstance;
     }
 
-    private class GETCallHelper extends AsyncTask<Void, Void, JSONArray> {
-        //View lView;
-        private String apiQuery;
-        JSONArray jArray = null;
-
-        private GETCallHelper(String url){
-            apiQuery = url;
+    public RequestQueue getRequestQueue(){
+        if(mRequestQueue == null){
+            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
         }
+        return mRequestQueue;
+    }
 
-        @Override
-        protected JSONArray doInBackground(Void... params){
-            String result = "";
-            try{
-                URL url = new URL(apiQuery);
-                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-                httpURLConnection.setRequestMethod("Get");
-                httpURLConnection.setDoOutput(true);
-                httpURLConnection.setDoInput(true);
-                OutputStream outputStream = httpURLConnection.getOutputStream();
+    public ImageLoader getmImageLoader(){
+        return mImageLoader;
+    }
 
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                //get_Data = URLEncoder.encode("func", "UTF-8") + "=" + URLEncoder.encode("denyRestaurantSubmission","UTF-8") + "&" + URLEncoder.encode("itemID", "UTF-8") + "=" + URLEncoder.encode(itemID,"UTF-8");
-                //bufferedWriter.write(get_Data);
+    /*Troubadour API Methods*/
+    public void getPreferences(final APICallback callback, JSONObject body){
 
-                bufferedWriter.flush();
-                bufferedWriter.close();
-                outputStream.close();
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
-                String line;
-                while((line=bufferedReader.readLine()) != null){
-                    result+=line;
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, apiURL + "/preferences", null, new Response.Listener<JSONObject>() {
+
+                @Override
+                public void onResponse(JSONObject response) {
+                    callback.onSuccess(response);
                 }
-                bufferedReader.close();
-                inputStream.close();
-                httpURLConnection.disconnect();
+            }, new Response.ErrorListener() {
 
-                jArray = encodeJSONArray(result);
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(mCtx, "Error: " + error, Toast.LENGTH_LONG);
+                }
 
-            }catch(MalformedURLException e){
-                e.printStackTrace();
-            }catch(IOException e){
-                e.printStackTrace();
-                e.printStackTrace();
             }
-            return jArray;
-        }
+            ) {
+                @Override
+                public Map<String,String> getHeaders(){
+                    String android_id = Settings.Secure.getString(mCtx.getContentResolver(), Settings.Secure.ANDROID_ID);
+                    Map<String,String> params = new ArrayMap<String,String>();
+                    params.put("X-USER-ID", android_id);
+                    params.put("Content-Type", "application/json");
+                    return params;
+                }
 
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-        }
+            };
+            mRequestQueue.add(jsonObjectRequest);
+    }
 
-        @SuppressWarnings({"UnusedDeclaration"})
-        protected void onPostExecute(Void Avoid){
-        }
+    public void postPreferences(final APICallback callback, JSONObject selectedPreference){
 
-        @Override
-        protected void onProgressUpdate(Void... values){
-            super.onProgressUpdate(values);
-        }
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, apiURL + "/preferences", selectedPreference, new Response.Listener<JSONObject>() {
 
-        private JSONArray encodeJSONArray(String unencodedJSON){
-            JSONArray jsonArray = null;
-            try {
-                jsonArray = new JSONArray(unencodedJSON);
+            @Override
+            public void onResponse(JSONObject response) {
+                callback.onSuccess(response);
             }
-            catch(JSONException e){
-                Log.e("JSON Parse","Result: " + unencodedJSON + "|Error parsing data: " + e.toString());
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(mCtx, "Error: " + error, Toast.LENGTH_LONG);
             }
 
-            return jsonArray;
         }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                String android_id = Settings.Secure.getString(mCtx.getContentResolver(), Settings.Secure.ANDROID_ID);
+                Map<String, String> params = new ArrayMap<String, String>();
+                params.put("X-USER-ID", android_id);
+                params.put("Content-Type", "application/json");
+                return params;
+            }
+        };
+        mRequestQueue.add(jsonObjectRequest);
+    }
 
+    /*Troubadour API Methods APIHandlerCallback Interfaces*/
+    //This allows for a function to be performed after the Response is received
+    public interface APICallback{
+        void onSuccess(JSONObject response);
     }
 
 }
