@@ -90,8 +90,9 @@ public class APIHandler {
         );
         String android_id = Settings.Secure.getString(mCtx.getContentResolver(),
             Settings.Secure.ANDROID_ID);
-        jsonObjectRequest.setHeader("X-USER-ID", android_id);
-        jsonObjectRequest.setHeader("Content-Type", "application/json");
+        jsonObjectRequest
+                .setHeader("X-USER-ID", android_id)
+                .setHeader("Content-Type", "application/json");
         mRequestQueue.add(jsonObjectRequest);
     }
 
@@ -110,8 +111,10 @@ public class APIHandler {
         );
         String android_id = Settings.Secure.getString(mCtx.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        jsonObjectRequest.setHeader("X-USER-ID", android_id);
-        jsonObjectRequest.setHeader("Content-Type", "application/json");
+        jsonObjectRequest
+                .setHeader("X-USER-ID", android_id)
+                .setHeader("Content-Type", "application/json");
+        mRequestQueue.add(jsonObjectRequest);
     }
 
 }

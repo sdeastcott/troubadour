@@ -204,12 +204,9 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         });
     }
     public void PostPreference(JSONObject body) {
-        apiHandler.postPreferences(new APIHandler.APICallback() {
-            @Override
-            public void onSuccess(JSONObject response) {
+        apiHandler.putPreferences(body, (JSONObject) -> {
                 Toast.makeText(getBaseContext(), "Did Something", Toast.LENGTH_LONG).show();
-            }
-        });
+            });
     }
     //Async Task class that performs the query 'inBackground' and updates the Preferences ListView 'onPostExecute'
     private class QueryPreferences extends AsyncTask<Void, Void, Void> {
