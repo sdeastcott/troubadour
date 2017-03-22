@@ -66,12 +66,7 @@ public class PreferenceActivity extends AppCompatActivity {
 
     public void initUI(){
         apiHandler = new APIHandler(getApplicationContext());
-        apiHandler.getPreferences(new APIHandler.APICallback() {
-            @Override
-            public void onSuccess(JSONObject response) {
-                updateListView(response);
-            }
-        });
+        apiHandler.getPreferences(this::updateListView);
     }
 
     @Override

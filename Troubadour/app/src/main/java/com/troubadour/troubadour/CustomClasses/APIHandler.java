@@ -76,70 +76,45 @@ public class APIHandler {
         return mImageLoader;
     }
 
-    /*Troubadour API Methods*/
-    public void getPreferences(final APICallback callback, JSONObject body){
-
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, apiURL + "/preferences", null, new Response.Listener<JSONObject>() {
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    callback.onSuccess(response);
-                }
-            }, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(mCtx, "Error: " + error, Toast.LENGTH_LONG);
-                }
-
-            }
-            ) {
-                @Override
-                public Map<String,String> getHeaders(){
-                    String android_id = Settings.Secure.getString(mCtx.getContentResolver(), Settings.Secure.ANDROID_ID);
-                    Map<String,String> params = new ArrayMap<String,String>();
-                    params.put("X-USER-ID", android_id);
-                    params.put("Content-Type", "application/json");
-                    return params;
-                }
-
-            };
-            mRequestQueue.add(jsonObjectRequest);
+    public void getPreferences(final Response.Listener<JSONObject> callback) {
+         getPreferences(callback, (VolleyError e) ->
+                Toast.makeText(mCtx, "Error: " + e, Toast.LENGTH_LONG));
     }
 
-    public void postPreferences(final APICallback callback, JSONObject selectedPreference){
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, apiURL + "/preferences", selectedPreference, new Response.Listener<JSONObject>() {
-
-            @Override
-            public void onResponse(JSONObject response) {
-                callback.onSuccess(response);
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(mCtx, "Error: " + error, Toast.LENGTH_LONG);
-            }
-
-        }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                String android_id = Settings.Secure.getString(mCtx.getContentResolver(), Settings.Secure.ANDROID_ID);
-                Map<String, String> params = new ArrayMap<String, String>();
-                params.put("X-USER-ID", android_id);
-                params.put("Content-Type", "application/json");
-                return params;
-            }
-        };
+    /*Troubadour API Methods*/
+    public void getPreferences(final Response.Listener<JSONObject> callback,
+                               final Response.ErrorListener errHandler){
+        TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.GET,
+                apiURL + "/preferences",
+                null, callback, errHandler
+        );
+        String android_id = Settings.Secure.getString(mCtx.getContentResolver(),
+            Settings.Secure.ANDROID_ID);
+        jsonObjectRequest
+                .setHeader("X-USER-ID", android_id)
+                .setHeader("Content-Type", "application/json");
         mRequestQueue.add(jsonObjectRequest);
     }
 
-    /*Troubadour API Methods APIHandlerCallback Interfaces*/
-    //This allows for a function to be performed after the Response is received
-    public interface APICallback{
-        void onSuccess(JSONObject response);
+    public void putPreferences(JSONObject selectedPreference,
+                               final Response.Listener<JSONObject> callback) {
+        putPreferences(selectedPreference, callback, (VolleyError e) ->
+                Toast.makeText(mCtx, "Error: " + e, Toast.LENGTH_LONG));
+    }
+
+
+    public void putPreferences(JSONObject selectedPreference,
+                               final Response.Listener<JSONObject> callback,
+                               final Response.ErrorListener errHandler) {
+        TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.PUT,
+                apiURL + "/preferences", selectedPreference, callback, errHandler
+        );
+        String android_id = Settings.Secure.getString(mCtx.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        jsonObjectRequest
+                .setHeader("X-USER-ID", android_id)
+                .setHeader("Content-Type", "application/json");
+        mRequestQueue.add(jsonObjectRequest);
     }
 
 }
