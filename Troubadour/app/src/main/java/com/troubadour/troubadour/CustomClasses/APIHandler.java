@@ -76,16 +76,18 @@ public class APIHandler {
         return mImageLoader;
     }
 
+    public void getPreferences(final Response.Listener<JSONObject> callback) {
+         getPreferences(callback, (VolleyError e) ->
+                Toast.makeText(mCtx, "Error: " + e, Toast.LENGTH_LONG));
+    }
+
     /*Troubadour API Methods*/
-    public void getPreferences(final APICallback callback, JSONObject body){
+    public void getPreferences(final Response.Listener<JSONObject> callback,
+                               Response.ErrorListener errHandler){
 
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, apiURL + "/preferences", null, new Response.Listener<JSONObject>() {
-
-                @Override
-                public void onResponse(JSONObject response) {
-                    callback.onSuccess(response);
-                }
-            }, new Response.ErrorListener() {
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
+                    apiURL + "/preferences",
+                    null, callback, new Response.ErrorListener() {
 
                 @Override
                 public void onErrorResponse(VolleyError error) {
@@ -107,9 +109,12 @@ public class APIHandler {
             mRequestQueue.add(jsonObjectRequest);
     }
 
-    public void postPreferences(final APICallback callback, JSONObject selectedPreference){
+    public void postPreferences(JSONObject selectedPreference, final APICallback callback){
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, apiURL + "/preferences", selectedPreference, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest =
+                new JsonObjectRequest(Request.Method.PUT,
+                        apiURL + "/preferences", selectedPreference,
+                        new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
@@ -138,8 +143,8 @@ public class APIHandler {
 
     /*Troubadour API Methods APIHandlerCallback Interfaces*/
     //This allows for a function to be performed after the Response is received
-    public interface APICallback{
-        void onSuccess(JSONObject response);
-    }
+//    public interface APICallback{
+//        void onSuccess(JSONObject response);
+//    }
 
 }
