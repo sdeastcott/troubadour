@@ -83,68 +83,35 @@ public class APIHandler {
 
     /*Troubadour API Methods*/
     public void getPreferences(final Response.Listener<JSONObject> callback,
-                               Response.ErrorListener errHandler){
-
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
-                    apiURL + "/preferences",
-                    null, callback, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(mCtx, "Error: " + error, Toast.LENGTH_LONG);
-                }
-
-            }
-            ) {
-                @Override
-                public Map<String,String> getHeaders(){
-                    String android_id = Settings.Secure.getString(mCtx.getContentResolver(), Settings.Secure.ANDROID_ID);
-                    Map<String,String> params = new ArrayMap<String,String>();
-                    params.put("X-USER-ID", android_id);
-                    params.put("Content-Type", "application/json");
-                    return params;
-                }
-
-            };
-            mRequestQueue.add(jsonObjectRequest);
-    }
-
-    public void postPreferences(JSONObject selectedPreference, final APICallback callback){
-
-        JsonObjectRequest jsonObjectRequest =
-                new JsonObjectRequest(Request.Method.PUT,
-                        apiURL + "/preferences", selectedPreference,
-                        new Response.Listener<JSONObject>() {
-
-            @Override
-            public void onResponse(JSONObject response) {
-                callback.onSuccess(response);
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(mCtx, "Error: " + error, Toast.LENGTH_LONG);
-            }
-
-        }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                String android_id = Settings.Secure.getString(mCtx.getContentResolver(), Settings.Secure.ANDROID_ID);
-                Map<String, String> params = new ArrayMap<String, String>();
-                params.put("X-USER-ID", android_id);
-                params.put("Content-Type", "application/json");
-                return params;
-            }
-        };
+                               final Response.ErrorListener errHandler){
+        TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.GET,
+                apiURL + "/preferences",
+                null, callback, errHandler
+        );
+        String android_id = Settings.Secure.getString(mCtx.getContentResolver(),
+            Settings.Secure.ANDROID_ID);
+        jsonObjectRequest.setHeader("X-USER-ID", android_id);
+        jsonObjectRequest.setHeader("Content-Type", "application/json");
         mRequestQueue.add(jsonObjectRequest);
     }
 
-    /*Troubadour API Methods APIHandlerCallback Interfaces*/
-    //This allows for a function to be performed after the Response is received
-//    public interface APICallback{
-//        void onSuccess(JSONObject response);
-//    }
+    public void putPreferences(JSONObject selectedPreference,
+                               final Response.Listener<JSONObject> callback) {
+        putPreferences(selectedPreference, callback, (VolleyError e) ->
+                Toast.makeText(mCtx, "Error: " + e, Toast.LENGTH_LONG));
+    }
+
+
+    public void putPreferences(JSONObject selectedPreference,
+                               final Response.Listener<JSONObject> callback,
+                               final Response.ErrorListener errHandler) {
+        TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.PUT,
+                apiURL + "/preferences", selectedPreference, callback, errHandler
+        );
+        String android_id = Settings.Secure.getString(mCtx.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        jsonObjectRequest.setHeader("X-USER-ID", android_id);
+        jsonObjectRequest.setHeader("Content-Type", "application/json");
+    }
 
 }
