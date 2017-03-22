@@ -89,9 +89,9 @@ public class APIHandler {
     @SuppressWarnings("WeakerAccess")
     public void getPreferences(final Response.Listener<JSONObject> callback,
                                final Response.ErrorListener errHandler){
-        TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.GET,
-                apiURL + "/preferences",
-                null, callback, errHandler
+        TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(
+                Request.Method.GET,
+                apiURL + "/preferences", callback, errHandler
         );
 
         jsonObjectRequest
@@ -101,7 +101,7 @@ public class APIHandler {
     }
 
     /* putPreferences Error Handler */
-    public void putPreferences(JSONObject selectedPreference,
+    public void putPreferences(JSONArray selectedPreference,
                                final Response.Listener<JSONObject> callback) {
         putPreferences(selectedPreference, callback, (VolleyError e) ->
                 Toast.makeText(mCtx, "Error: " + e, Toast.LENGTH_LONG).show());
@@ -110,7 +110,7 @@ public class APIHandler {
 
     /* PUT /Preferences for the Troubadour API with the androidID and a JSONObject selectedPreference */
     @SuppressWarnings("WeakerAccess")
-    public void putPreferences(JSONObject selectedPreference,
+    public void putPreferences(JSONArray selectedPreference,
                                final Response.Listener<JSONObject> callback,
                                final Response.ErrorListener errHandler) {
         TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.PUT,
@@ -159,7 +159,7 @@ public class APIHandler {
                           final Response.Listener<JSONObject> callback,
                           final Response.ErrorListener errHandler){
         TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.GET,
-                apiURL + "/search?q=" + searchQuery, null, callback, errHandler
+                apiURL + "/search?q=" + searchQuery, callback, errHandler
         );
        jsonObjectRequest
                .setHeader("X-USER-ID", androidID)
