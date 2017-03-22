@@ -72,8 +72,9 @@ public class PreferenceActivity extends AppCompatActivity {
     @Override
     public void onRestart(){
         super.onRestart();
-        GetUserPreferences userPreferences = new GetUserPreferences(apiURL);
-        userPreferences.execute();
+        initUI();
+        //GetUserPreferences userPreferences = new GetUserPreferences(apiURL);
+        //userPreferences.execute();
     }
 
     @Override
@@ -92,13 +93,22 @@ public class PreferenceActivity extends AppCompatActivity {
            return true;
         }
         if(id == R.id.trashCanPreferenceListActionBar){
-            DeleteUserPreferences deleteUserPreferences = new DeleteUserPreferences(selectedPreferenceListItems, apiURL);
-            deleteUserPreferences.execute();
-            lView.clearChoices();
-            item.setVisible(false);
+            //DeleteUserPreferences deleteUserPreferences = new DeleteUserPreferences(selectedPreferenceListItems, apiURL);
+            //deleteUserPreferences.execute();
+            JSONArray jsonArray = new JSONArray();
+            for (String selectedObj : selectedPreferenceListItems) {
+                jsonArray.put(selectedObj);
+            }
+            apiHandler.deletePreferences(jsonArray,this::cleanUpDelete);
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void cleanUpDelete(JSONArray jArray){
+        lView.clearChoices();
+        MenuItem item = (MenuItem) findViewById(R.id.trashCanPreferenceListActionBar);
+        item.setVisible(false);
     }
 
     //Populates ListView with a given jsonArray
@@ -219,6 +229,7 @@ public class PreferenceActivity extends AppCompatActivity {
         });
     }
 
+    /*
     private class GetUserPreferences extends AsyncTask<Void, Void, Void> {
 
         private String android_id;
@@ -388,4 +399,5 @@ public class PreferenceActivity extends AppCompatActivity {
         }
 
     }
+    */
 }

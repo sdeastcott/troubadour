@@ -1,14 +1,10 @@
 package com.troubadour.troubadour.Activities;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.v4.text.TextUtilsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -18,7 +14,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.spotify.sdk.android.player.Spotify;
 import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.Adapters.PreferenceListAdapter;
 import com.troubadour.troubadour.R;
@@ -26,26 +21,16 @@ import com.troubadour.troubadour.CustomClasses.SpotifyObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-
-import static java.security.AccessController.getContext;
 
 /*CreatePreference Activity allows a user to enter new music preferences*/
 public class CreatePreferenceActivity extends AppCompatActivity {
 
-    APIHandler apiHandler;
-    String apiURL = "https://api.troubadour.tk";
+    Context context;
     ListView prefList;
     PreferenceListAdapter preferenceListAdapter;
-    ArrayList<SpotifyObject> preferenceListItemArrayList = new ArrayList();
+    private APIHandler apiHandler;
+    private ArrayList<SpotifyObject> preferenceListItemArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +40,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         toolbar.setTitle("Music Preferences");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        context = this;
 
         //Adds the 'back' icon to the action bar
         initUI();
@@ -74,7 +60,8 @@ public class CreatePreferenceActivity extends AppCompatActivity {
 
     //Initializes UI widgets for the Activity
     public void initUI(){
-        apiHandler = new APIHandler(getApplicationContext());
+        //apiHandler = new APIHandler(getApplicationContext());
+        //apiHandler.getPreferences(this::updateListView);
 
         final EditText queryEdit = (EditText) findViewById(R.id.prefSearchEditText);
         Button createButton = (Button) findViewById(R.id.prefSearchButton);
@@ -89,11 +76,15 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                     Toast.makeText(getBaseContext(), "Please enter a valid search", Toast.LENGTH_LONG).show();
                 }else {
                     String query = queryEdit.getText().toString();
-                    QueryPreferences qPreferences = new QueryPreferences(query);
-                    qPreferences.execute();
+                    getSearch(query);
                 }
             }
         });
+    }
+
+    //Get Search
+    public void getSearch(String query){
+        apiHandler.getSearch(query,this::updateListView);
     }
 
     //Populates ListView with a given jsonArray
@@ -104,10 +95,10 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         prefList = (ListView) findViewById(R.id.prefSearchResultsListView);
 
        try {
-            SpotifyObject displayObject = null;
-            String id = "";
-            String name = "";
-            String uri = "";
+            SpotifyObject displayObject;
+            String id;
+            String name;
+            String uri;
             String[] images = new String[3];
 
             JSONObject jData = jsonObject.getJSONObject("data");
@@ -196,17 +187,22 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                     JSONObject body = new JSONObject();
                     body.put("spotify_uri", selectedPreference.getSpotifyURI());
                     body.put("name",selectedPreference.getSpotifyName());
-                    PostPreference(body);
+                    PutPreference(body);
                 }catch(JSONException e){
                     e.printStackTrace();
                 }
             }
         });
     }
-    public void PostPreference(JSONObject body) {
+    public void PutPreference(JSONObject body) {
         apiHandler.putPreferences(body, (JSONObject) -> {
                 Toast.makeText(getBaseContext(), "Did Something", Toast.LENGTH_LONG).show();
             });
+    }
+
+    /*
+    public void GetPreferences(){
+        //apiHandler.get
     }
     //Async Task class that performs the query 'inBackground' and updates the Preferences ListView 'onPostExecute'
     private class QueryPreferences extends AsyncTask<Void, Void, Void> {
@@ -277,7 +273,9 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         }
 
     }
+    */
 
+    /*
     //Async Task class that performs the query 'inBackground' and updates the Preferences ListView 'onPostExecute'
     private class PostNewPreference extends AsyncTask<Void, Void, Void> {
 
@@ -368,4 +366,5 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         }
 
     }
+    */
 }
