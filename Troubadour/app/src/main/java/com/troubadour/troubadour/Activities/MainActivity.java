@@ -3,12 +3,14 @@ package com.troubadour.troubadour.Activities;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.preference.PreferenceActivity;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.R;
 
 import org.json.JSONArray;
@@ -42,7 +44,9 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startActivity(preferenceIntent);
             }
          });
+
     }
+
     public void displaySecret(){
 
         // Reading json file from assets folder
@@ -80,8 +84,9 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject jsonChildNode = jsonMainNode.getJSONObject(0);
                 String cID= jsonChildNode.optString("ClientID");
                 String cSecret= jsonChildNode.optString("ClientSecret");
-                Toast.makeText(this, "ClientID: '" +cID+ "' | ClientSecret: '" + cSecret, Toast.LENGTH_LONG).show();
-
+            //Toast.makeText(this, "ClientID: '" +cID+ "' | ClientSecret: '" + cSecret, Toast.LENGTH_LONG).show();
+            String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            Toast.makeText(this, "Android ID: " + android_id, Toast.LENGTH_LONG);
         }
         catch(JSONException e){
             Toast.makeText(this, "Error"+e.toString(), Toast.LENGTH_SHORT).show();
