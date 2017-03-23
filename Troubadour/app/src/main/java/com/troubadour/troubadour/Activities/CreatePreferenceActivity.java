@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
 import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.Adapters.PreferenceListAdapter;
 import com.troubadour.troubadour.R;
@@ -60,8 +61,8 @@ public class CreatePreferenceActivity extends AppCompatActivity {
 
     //Initializes UI widgets for the Activity
     public void initUI(){
-        //apiHandler = new APIHandler(getApplicationContext());
-        //apiHandler.getPreferences(this::updateListView);
+        apiHandler = new APIHandler(getApplicationContext());
+        apiHandler.getPreferences(this::updateListView);
 
         final EditText queryEdit = (EditText) findViewById(R.id.prefSearchEditText);
         Button createButton = (Button) findViewById(R.id.prefSearchButton);
@@ -195,7 +196,9 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         });
     }
     public void PutPreference(JSONObject body) {
-        apiHandler.putPreferences(body, (JSONObject) -> {
+        JSONArray wrapper = new JSONArray();
+        wrapper.put(body);
+        apiHandler.putPreferences(wrapper, (JSONObject) -> {
                 Toast.makeText(getBaseContext(), "Did Something", Toast.LENGTH_LONG).show();
             });
     }
