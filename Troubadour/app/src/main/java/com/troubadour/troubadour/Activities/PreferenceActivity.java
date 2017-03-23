@@ -65,6 +65,7 @@ public class PreferenceActivity extends AppCompatActivity {
     }
 
     public void initUI(){
+        preferenceListItems = new ArrayList<SpotifyObject>();
         apiHandler = new APIHandler(getApplicationContext());
         apiHandler.getPreferences(this::updateListView);
     }
@@ -95,20 +96,24 @@ public class PreferenceActivity extends AppCompatActivity {
         if(id == R.id.trashCanPreferenceListActionBar){
             //DeleteUserPreferences deleteUserPreferences = new DeleteUserPreferences(selectedPreferenceListItems, apiURL);
             //deleteUserPreferences.execute();
-            JSONArray jsonArray = new JSONArray();
-            for (String selectedObj : selectedPreferenceListItems) {
-                jsonArray.put(selectedObj);
+            String strPref = "";
+            for (String selectedPref : selectedPreferenceListItems) {
+                strPref += selectedPref + ",";
             }
-            apiHandler.deletePreferences(jsonArray,this::cleanUpDelete);
+
+            strPref = strPref.substring(0,strPref.length()-1);
+            apiHandler.deletePreferences(strPref, this::cleanUpDelete);
             return true;
+
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void cleanUpDelete(JSONArray jArray){
+    public void cleanUpDelete(JSONObject jsonObject){
         lView.clearChoices();
-        MenuItem item = (MenuItem) findViewById(R.id.trashCanPreferenceListActionBar);
+        MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
         item.setVisible(false);
+        initUI();
     }
 
     //Populates ListView with a given jsonArray

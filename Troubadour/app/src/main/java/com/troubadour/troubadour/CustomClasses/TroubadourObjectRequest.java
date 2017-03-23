@@ -44,7 +44,7 @@ public class TroubadourObjectRequest extends JsonObjectRequest {
     public TroubadourObjectRequest(int method, String url, JSONArray jsonRequest,
                                    Response.Listener<JSONObject> listener,
                                    Response.ErrorListener errorListener) {
-        super(url, null, listener, errorListener);
+        super(method, url, null, listener, errorListener);
         mBody = (jsonRequest == null) ? null : jsonRequest.toString();
     }
 

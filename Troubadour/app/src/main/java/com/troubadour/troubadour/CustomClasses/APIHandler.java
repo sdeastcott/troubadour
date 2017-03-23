@@ -3,6 +3,7 @@ package com.troubadour.troubadour.CustomClasses;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
@@ -116,32 +118,37 @@ public class APIHandler {
         TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.PUT,
                 apiURL + "/preferences", selectedPreference, callback, errHandler
         );
+        Log.e("androidID",androidID);
+        Log.e("Put body:", selectedPreference.toString());
         jsonObjectRequest
                 .setHeader("X-USER-ID", androidID)
                 .setHeader("Content-Type", "application/json");
+        Log.e("JSONRequestObject PUT: ",jsonObjectRequest.toString());
         mRequestQueue.add(jsonObjectRequest);
     }
 
     /* deletePreferences Error Handler */
-    public void deletePreferences(JSONArray selectedPreferences,
-                                  final Response.Listener<JSONArray> callback){
-        deletePreferences(selectedPreferences, callback, (VolleyError e) ->
+    public void deletePreferences(String pref,
+                                  final Response.Listener<JSONObject> callback){
+        deletePreferences(pref, callback, (VolleyError e) ->
                 Toast.makeText(mCtx,"Error: " + e, Toast.LENGTH_LONG).show());
     }
 
     /* DELETE /Preferences for the Troubadour API with the androidID and an Array of Spotify URI strings */
     @SuppressWarnings("WeakerAccess")
-    public void deletePreferences(JSONArray selectedPreferences,
-                                  final Response.Listener<JSONArray> callback,
+    public void deletePreferences(String pref,
+                                  final Response.Listener<JSONObject> callback,
                                   final Response.ErrorListener errHandler) {
-        TroubadourArrayRequest jsonArrayRequest = new TroubadourArrayRequest(Request.Method.DELETE,
-                apiURL + "/preferences", selectedPreferences, callback, errHandler
-        );
+           TroubadourObjectRequest jsonArrayRequest = new TroubadourObjectRequest(Request.Method.DELETE,
+                    apiURL + "/preferences?ids=" + pref, callback, errHandler
+            );
 
-        jsonArrayRequest
-                .setHeader("X-USER-ID",androidID)
-                .setHeader("Content-Type", "application/json");
-        mRequestQueue.add(jsonArrayRequest);
+
+            jsonArrayRequest
+                    .setHeader("X-USER-ID", androidID)
+                    .setHeader("Content-Type", "application/json");
+            Log.e("Request DELETE: ", jsonArrayRequest.toString());
+            mRequestQueue.add(jsonArrayRequest);
     }
 
 

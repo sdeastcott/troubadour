@@ -62,7 +62,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
     //Initializes UI widgets for the Activity
     public void initUI(){
         apiHandler = new APIHandler(getApplicationContext());
-        apiHandler.getPreferences(this::updateListView);
+        //apiHandler.getPreferences(this::updateListView);
 
         final EditText queryEdit = (EditText) findViewById(R.id.prefSearchEditText);
         Button createButton = (Button) findViewById(R.id.prefSearchButton);
@@ -199,7 +199,12 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         JSONArray wrapper = new JSONArray();
         wrapper.put(body);
         apiHandler.putPreferences(wrapper, (JSONObject) -> {
-                Toast.makeText(getBaseContext(), "Did Something", Toast.LENGTH_LONG).show();
+                try {
+                    Toast.makeText(getBaseContext(), "Added: " + body.getString("name"), Toast.LENGTH_LONG).show();
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+
             });
     }
 
