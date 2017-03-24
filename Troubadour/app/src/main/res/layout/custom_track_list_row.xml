@@ -9,7 +9,7 @@
     tools:ignore="UseCompoundDrawables">
 
     <TextView
-        android:id="@+id/trackListRowNameViewEdited"
+        android:id="@+id/trackListRowNameView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="5dp"
@@ -20,7 +20,7 @@
 
 
     <TextView
-        android:id="@+id/trackListRowArtistViewEdited"
+        android:id="@+id/trackListRowArtistView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -28,7 +28,7 @@
         android:paddingStart="5dp"
         android:text="TextView"
         android:textAlignment="textStart"
-        android:textSize="12sp"
+        android:textSize="16sp"
         tools:ignore="HardcodedText" />
 
 </LinearLayout>
