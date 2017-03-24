@@ -11,6 +11,9 @@ public class SpotifyObject {
     private String spotifyURL; //http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6
     private String spotifyID;  //6rqhFgbbKwnb9MLmUQDhG6
     private String spotifyName;
+
+
+    private String spotifyTrackArtist;
     private String spotifyType;
     private String[] spotifyImages = new String[3];
 
@@ -20,8 +23,9 @@ public class SpotifyObject {
         this.spotifyID = "";
         this.spotifyName = "";
         this.spotifyType = "";
+        this.spotifyTrackArtist = "";
     }
-    public SpotifyObject(String spotURI, String spotURL, String spotID, String spotType, String[] spotImages, String spotName){
+    public SpotifyObject(String spotURI, String spotURL, String spotID, String spotType, String[] spotImages, String spotName, String spotTrackArtist){
         this();
         this.spotifyURI = spotURI;
         this.spotifyURL = spotURL;
@@ -29,6 +33,7 @@ public class SpotifyObject {
         this.spotifyType = spotType;
         this.spotifyImages = spotImages;
         this.spotifyName = spotName;
+        this.spotifyTrackArtist = spotTrackArtist;
     }
     public String getSpotifyURI() {
         return spotifyURI;
@@ -77,4 +82,14 @@ public class SpotifyObject {
     public void setSpotifyImages(String[] spotifyImages) {
         this.spotifyImages = spotifyImages;
     }
+
+    public String getSpotifyTrackArtist() {
+        return spotifyTrackArtist;
+    }
+
+    public void setSpotifyTrackArtist(String spotifyTrackArtist) {
+        this.spotifyTrackArtist = spotifyTrackArtist;
+    }
+
 }
+

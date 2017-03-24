@@ -9,14 +9,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
-import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.R;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initUI();
-        displaySecret();
     }
 
 
@@ -47,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @SuppressWarnings("unused")
     public void displaySecret(){
 
         // Reading json file from assets folder
@@ -82,11 +78,11 @@ public class MainActivity extends AppCompatActivity {
 
             //Display first Secret
                 JSONObject jsonChildNode = jsonMainNode.getJSONObject(0);
-                String cID= jsonChildNode.optString("ClientID");
-                String cSecret= jsonChildNode.optString("ClientSecret");
+                String cID = jsonChildNode.optString("ClientID");
+                String cSecret = jsonChildNode.optString("ClientSecret");
             //Toast.makeText(this, "ClientID: '" +cID+ "' | ClientSecret: '" + cSecret, Toast.LENGTH_LONG).show();
-            String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-            Toast.makeText(this, "Android ID: " + android_id, Toast.LENGTH_LONG);
+            //String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            //Toast.makeText(this, "Android ID: " + android_id, Toast.LENGTH_LONG);
         }
         catch(JSONException e){
             Toast.makeText(this, "Error"+e.toString(), Toast.LENGTH_SHORT).show();
