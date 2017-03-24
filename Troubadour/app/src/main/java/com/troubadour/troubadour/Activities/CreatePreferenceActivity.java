@@ -100,15 +100,19 @@ public class CreatePreferenceActivity extends AppCompatActivity {
             String id;
             String name;
             String uri;
+            String trackArtist;
+
             String[] images = new String[3];
 
             JSONObject jData = jsonObject.getJSONObject("data");
             JSONArray jArtists = jData.getJSONArray("artists");
             JSONArray jTracks = jData.getJSONArray("tracks");
             JSONArray jAlbums = jData.getJSONArray("albums");
+            JSONArray jTrackArtistArr;
+            JSONObject jTrackArtistObj;
 
             if(jArtists.length() > 0) {
-                displayObject = new SpotifyObject("", "", "", "display", null, "Artists");
+                displayObject = new SpotifyObject("", "", "", "display", null, "Artists", "");
                 preferenceListItemArrayList.add(displayObject);
             }
 
@@ -126,13 +130,13 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 }
                 uri = pref.getString("uri");
 
-                SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name);
+                SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name, "");
                 preferenceListItemArrayList.add(spotObject);
                 images = new String[3];
             }
 
             if(jTracks.length() > 0) {
-                displayObject = new SpotifyObject("", "", "", "display", null, "Tracks");
+                displayObject = new SpotifyObject("", "", "", "display", null, "Tracks", "");
                 preferenceListItemArrayList.add(displayObject);
             }
 
@@ -143,13 +147,16 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 id = pref.getString("spotify_id");
                 name = pref.getString("name");
                 uri = pref.getString("uri");
+                jTrackArtistArr = pref.getJSONArray("artists");
+                jTrackArtistObj = jTrackArtistArr.getJSONObject(0);
+                trackArtist = jTrackArtistObj.getString("name");
 
-                SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name);
+                SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name, trackArtist);
                 preferenceListItemArrayList.add(spotObject);
             }
 
             if(jAlbums.length() > 0) {
-                displayObject = new SpotifyObject("", "", "", "display", null, "Albums");
+                displayObject = new SpotifyObject("", "", "", "display", null, "Albums", "");
                 preferenceListItemArrayList.add(displayObject);
             }
 
@@ -167,7 +174,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 }
                 uri = pref.getString("uri");
 
-                SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name);
+                SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name, "");
                 preferenceListItemArrayList.add(spotObject);
                 images = new String[3];
             }
@@ -207,172 +214,4 @@ public class CreatePreferenceActivity extends AppCompatActivity {
 
             });
     }
-
-    /*
-    public void GetPreferences(){
-        //apiHandler.get
-    }
-    //Async Task class that performs the query 'inBackground' and updates the Preferences ListView 'onPostExecute'
-    private class QueryPreferences extends AsyncTask<Void, Void, Void> {
-
-        private String apiQuery;
-        JSONObject jObject = null;
-
-        private QueryPreferences(String url){
-            apiQuery = url;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params){
-            String result = "";
-            String get_Data = "";
-            try{
-                URL url = new URL(apiURL + "/search?q=" + apiQuery);
-                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-                Log.e("tag",Integer.toString(httpURLConnection.getResponseCode()));
-                httpURLConnection.setRequestMethod("GET");
-
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-                String line;
-                while((line=bufferedReader.readLine()) != null){
-                    result+=line;
-                }
-                bufferedReader.close();
-                inputStream.close();
-                httpURLConnection.disconnect();
-
-                jObject = encodeJSONArray(result);
-
-            }catch(MalformedURLException e) {
-                e.printStackTrace();
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-        }
-
-        //@SuppressWarnings({"UnusedDeclaration"})
-        @Override
-        protected void onPostExecute(Void Avoid){
-            updateListView(jObject);
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values){
-            super.onProgressUpdate(values);
-        }
-
-        private JSONObject encodeJSONArray(String rawJson){
-            JSONObject jsonObject= null;
-            try {
-                jsonObject = new JSONObject(rawJson);
-            }
-            catch(JSONException e){
-                Log.e("JSON Parse","Result: " + rawJson + "|Error parsing data: " + e.toString());
-            }
-
-            return jsonObject;
-        }
-
-    }
-    */
-
-    /*
-    //Async Task class that performs the query 'inBackground' and updates the Preferences ListView 'onPostExecute'
-    private class PostNewPreference extends AsyncTask<Void, Void, Void> {
-
-        private int selectedPref;
-        private String android_id;
-        private SpotifyObject selectedSpotifyObject;
-        private JSONObject jObject = null;
-
-        private PostNewPreference(int position){
-            selectedPref = position;
-            android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        }
-
-        @Override
-        protected Void doInBackground(Void... params){
-            String result = "";
-            String get_Data = "";
-            try{
-                selectedSpotifyObject = preferenceListItemArrayList.get(selectedPref);
-                URL url = new URL(apiURL + "/preferences");
-
-                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-                httpURLConnection.setRequestProperty("X-USER-ID",android_id);
-                httpURLConnection.setRequestProperty("Content-Type","application/json");
-
-                JSONArray arr = new JSONArray();
-                JSONObject body = new JSONObject();
-                body.put("spotify_uri",selectedSpotifyObject.getSpotifyURI());
-                body.put("name",selectedSpotifyObject.getSpotifyName());
-                Log.e("PUT DEBUG | ","spotify_uri: "+selectedSpotifyObject.getSpotifyURI() + "spotify_name: " + selectedSpotifyObject.getSpotifyName());
-                httpURLConnection.setDoOutput(true);
-                httpURLConnection.setRequestMethod("PUT");
-                arr.put(body);
-
-                OutputStreamWriter wr = new OutputStreamWriter(httpURLConnection.getOutputStream());
-                wr.write(arr.toString());
-                wr.close();
-
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-                String line;
-                while((line=bufferedReader.readLine()) != null){
-                    result+=line;
-                }
-                bufferedReader.close();
-                inputStream.close();
-                httpURLConnection.disconnect();
-                Log.e("response:", result);
-
-                //jObject = encodeJSONArray(result);
-
-            }catch(MalformedURLException e) {
-                e.printStackTrace();
-            }catch(IOException e){
-                e.printStackTrace();
-            }catch(JSONException e){
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-        }
-
-        //@SuppressWarnings({"UnusedDeclaration"})
-        @Override
-        protected void onPostExecute(Void Avoid){
-            //updateListView(jObject);
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values){
-            super.onProgressUpdate(values);
-        }
-
-        private JSONObject encodeJSONArray(String rawJson){
-            JSONObject jsonObject= null;
-            try {
-                jsonObject = new JSONObject(rawJson);
-            }
-            catch(JSONException e){
-                Log.e("JSON Parse","Result: " + rawJson + "|Error parsing data: " + e.toString());
-            }
-
-            return jsonObject;
-        }
-
-    }
-    */
 }

@@ -81,10 +81,13 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
                 albumImageTask.execute();
                 customView.setTag(sObject.getSpotifyID());
             }else if(sObjectType.equals("track")){
+                //customView = lInflater.inflate(R.layout.custom_track_list_row,parent,false);
                 customView = lInflater.inflate(R.layout.custom_track_list_row,parent,false);
-                TextView trackNameView = (TextView) customView.findViewById(R.id.trackListRowNameView);
+                TextView trackNameView = (TextView) customView.findViewById(R.id.trackListRowNameViewEdited);
+                TextView trackArtistView = (TextView) customView.findViewById(R.id.trackListRowArtistViewEdited);
 
                 trackNameView.setText(sObject.getSpotifyName());
+                trackArtistView.setText(sObject.getSpotifyTrackArtist());
                 customView.setTag(sObject.getSpotifyID());
             }else if(sObjectType.equals("artist")) {
                 customView = lInflater.inflate(R.layout.custom_artist_list_row, parent, false);
