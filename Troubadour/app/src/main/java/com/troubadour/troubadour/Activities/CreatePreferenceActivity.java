@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -100,7 +101,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
             String id;
             String name;
             String uri;
-            String secondaryArtist;
+            String secondaryArtist="";
 
             String[] images = new String[3];
 
@@ -111,7 +112,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
             JSONArray jSecondaryArtistArr;
             JSONObject jSecondaryArtistObj;
 
-            if(jArtists.length() > 0) {
+            if (jArtists.length() > 0) {
                 displayObject = new SpotifyObject("", "", "", "display", null, "Artists", "");
                 preferenceListItemArrayList.add(displayObject);
             }
@@ -123,7 +124,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 id = pref.getString("spotify_id");
                 name = pref.getString("name");
                 JSONArray tempArr = pref.getJSONArray("images");
-                if(tempArr.length() > 0) {
+                if (tempArr.length() > 0) {
                     for (int j = 0; j < 3; j++) {
                         images[j] = tempArr.getJSONObject(j).getString("url");
                     }
@@ -135,7 +136,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 images = new String[3];
             }
 
-            if(jTracks.length() > 0) {
+            if (jTracks.length() > 0) {
                 displayObject = new SpotifyObject("", "", "", "display", null, "Tracks", "");
                 preferenceListItemArrayList.add(displayObject);
             }
@@ -148,14 +149,18 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 name = pref.getString("name");
                 uri = pref.getString("uri");
                 jSecondaryArtistArr = pref.getJSONArray("artists");
-                jSecondaryArtistObj = jSecondaryArtistArr.getJSONObject(0);
-                secondaryArtist = jSecondaryArtistObj.getString("name");
+                for (int j = 0; j < jSecondaryArtistArr.length(); j++){
+                    if(j != 0){ secondaryArtist += ", ";}
+                    jSecondaryArtistObj = jSecondaryArtistArr.getJSONObject(j);
+                    secondaryArtist += jSecondaryArtistObj.getString("name");
+                }
 
                 SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name, secondaryArtist);
                 preferenceListItemArrayList.add(spotObject);
+                secondaryArtist = "";
             }
 
-            if(jAlbums.length() > 0) {
+            if (jAlbums.length() > 0) {
                 displayObject = new SpotifyObject("", "", "", "display", null, "Albums", "");
                 preferenceListItemArrayList.add(displayObject);
             }
@@ -167,19 +172,23 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 id = pref.getString("spotify_id");
                 name = pref.getString("name");
                 JSONArray tempArr = pref.getJSONArray("images");
-                if(tempArr.length() > 0) {
+                if (tempArr.length() > 0) {
                     for (int j = 0; j < 3; j++) {
                         images[j] = tempArr.getJSONObject(j).getString("url");
                     }
                 }
                 uri = pref.getString("uri");
                 jSecondaryArtistArr = pref.getJSONArray("artists");
-                jSecondaryArtistObj = jSecondaryArtistArr.getJSONObject(0);
-                secondaryArtist = jSecondaryArtistObj.getString("name");
+                for (int j = 0; j < jSecondaryArtistArr.length(); j++){
+                    if(j != 0){ secondaryArtist += ", ";}
+                    jSecondaryArtistObj = jSecondaryArtistArr.getJSONObject(j);
+                    secondaryArtist += jSecondaryArtistObj.getString("name");
+                }
 
                 SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name, secondaryArtist);
                 preferenceListItemArrayList.add(spotObject);
                 images = new String[3];
+                secondaryArtist = "";
             }
 
         }catch(JSONException e){
