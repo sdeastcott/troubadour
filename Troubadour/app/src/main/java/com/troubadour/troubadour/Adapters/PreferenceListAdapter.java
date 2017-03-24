@@ -73,21 +73,23 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
             if(sObjectType.equals("album")){
                 customView = lInflater.inflate(R.layout.custom_album_list_row,parent,false);
                 TextView albumNameView = (TextView) customView.findViewById(R.id.albumListRowNameView);
+                TextView artistNameView = (TextView) customView.findViewById(R.id.albumListRowArtistView);
                 ImageView albumImageView = (ImageView) customView.findViewById(R.id.albumListRowImageView);
 
                 //Set text and download the 64x64 res image to set image
                 albumNameView.setText(sObject.getSpotifyName());
+                artistNameView.setText(sObject.getSpotifySecondaryArtist());
                 DownloadImageTask albumImageTask = new DownloadImageTask(albumImageView,sObject.getSpotifyImages()[2]);
                 albumImageTask.execute();
                 customView.setTag(sObject.getSpotifyID());
             }else if(sObjectType.equals("track")){
                 //customView = lInflater.inflate(R.layout.custom_track_list_row,parent,false);
                 customView = lInflater.inflate(R.layout.custom_track_list_row,parent,false);
-                TextView trackNameView = (TextView) customView.findViewById(R.id.trackListRowNameViewEdited);
-                TextView trackArtistView = (TextView) customView.findViewById(R.id.trackListRowArtistViewEdited);
+                TextView trackNameView = (TextView) customView.findViewById(R.id.trackListRowNameView);
+                TextView trackArtistView = (TextView) customView.findViewById(R.id.trackListRowArtistView);
 
                 trackNameView.setText(sObject.getSpotifyName());
-                trackArtistView.setText(sObject.getSpotifyTrackArtist());
+                trackArtistView.setText(sObject.getSpotifySecondaryArtist());
                 customView.setTag(sObject.getSpotifyID());
             }else if(sObjectType.equals("artist")) {
                 customView = lInflater.inflate(R.layout.custom_artist_list_row, parent, false);
