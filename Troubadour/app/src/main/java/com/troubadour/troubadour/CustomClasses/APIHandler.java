@@ -82,7 +82,7 @@ public class APIHandler {
 
     /* getPreferences Error Handler */
     public void getPreferences(final Response.Listener<JSONObject> callback) {
-         getPreferences(callback, (VolleyError e) ->
+         getPreferences(callback, (TroubadourRequestError e) ->
                 Toast.makeText(mCtx, "Error: " + e, Toast.LENGTH_LONG).show());
     }
 
@@ -90,7 +90,7 @@ public class APIHandler {
     /* GET /Preferences for the Troubadour API with the androidID */
     @SuppressWarnings("WeakerAccess")
     public void getPreferences(final Response.Listener<JSONObject> callback,
-                               final Response.ErrorListener errHandler){
+                               final TroubadourRequestErrorHandler errHandler){
         TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(
                 Request.Method.GET,
                 apiURL + "/preferences", callback, errHandler
@@ -105,7 +105,7 @@ public class APIHandler {
     /* putPreferences Error Handler */
     public void putPreferences(JSONArray selectedPreference,
                                final Response.Listener<JSONObject> callback) {
-        putPreferences(selectedPreference, callback, (VolleyError e) ->
+        putPreferences(selectedPreference, callback, (TroubadourRequestError e) ->
                 Toast.makeText(mCtx, "Error: " + e, Toast.LENGTH_LONG).show());
     }
 
@@ -114,7 +114,7 @@ public class APIHandler {
     @SuppressWarnings("WeakerAccess")
     public void putPreferences(JSONArray selectedPreference,
                                final Response.Listener<JSONObject> callback,
-                               final Response.ErrorListener errHandler) {
+                               final TroubadourRequestErrorHandler errHandler) {
         TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.PUT,
                 apiURL + "/preferences", selectedPreference, callback, errHandler
         );
@@ -130,7 +130,7 @@ public class APIHandler {
     /* deletePreferences Error Handler */
     public void deletePreferences(String pref,
                                   final Response.Listener<JSONObject> callback){
-        deletePreferences(pref, callback, (VolleyError e) ->
+        deletePreferences(pref, callback, (TroubadourRequestError e) ->
                 Toast.makeText(mCtx,"Error: " + e, Toast.LENGTH_LONG).show());
     }
 
@@ -138,7 +138,7 @@ public class APIHandler {
     @SuppressWarnings("WeakerAccess")
     public void deletePreferences(String pref,
                                   final Response.Listener<JSONObject> callback,
-                                  final Response.ErrorListener errHandler) {
+                                  final TroubadourRequestErrorHandler errHandler) {
            TroubadourObjectRequest jsonArrayRequest = new TroubadourObjectRequest(Request.Method.DELETE,
                     apiURL + "/preferences?ids=" + pref, callback, errHandler
             );
@@ -156,7 +156,7 @@ public class APIHandler {
     /*  GET /Search Error Handler */
     public void getSearch(String searchQuery,
                           final Response.Listener<JSONObject> callback){
-        getSearch(searchQuery, callback, (VolleyError e) ->
+        getSearch(searchQuery, callback, (TroubadourRequestError e) ->
             Toast.makeText(mCtx, "Error: " + e, Toast.LENGTH_LONG).show());
     }
 
@@ -164,7 +164,7 @@ public class APIHandler {
     @SuppressWarnings("WeakerAccess")
     public void getSearch(String searchQuery,
                           final Response.Listener<JSONObject> callback,
-                          final Response.ErrorListener errHandler){
+                          final TroubadourRequestErrorHandler errHandler){
         TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.GET,
                 apiURL + "/search?q=" + searchQuery, callback, errHandler
         );
