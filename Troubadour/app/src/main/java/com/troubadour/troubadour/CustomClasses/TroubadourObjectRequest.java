@@ -1,18 +1,17 @@
 package com.troubadour.troubadour.CustomClasses;
 
-import android.provider.Settings;
 import android.support.v4.util.ArrayMap;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.gson.JsonArray;
+import com.troubadour.troubadour.CustomClasses.TroubadourRequestError;
+import com.troubadour.troubadour.CustomClasses.TroubadourRequestErrorHandler;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,28 +24,29 @@ public class TroubadourObjectRequest extends JsonObjectRequest {
 
     public TroubadourObjectRequest(int method, String url,
                                    Response.Listener<JSONObject> listener,
-                                   Response.ErrorListener errorListener) {
-        super(method, url, null, listener, errorListener);
+                                   TroubadourRequestErrorHandler errorListener) {
+        super(method, url, null, listener, (VolleyError e) -> errorListener.onError(new TroubadourRequestError(e)));
     }
 
     public TroubadourObjectRequest(int method, String url, JSONObject jsonRequest,
                                    Response.Listener<JSONObject> listener,
-                                   Response.ErrorListener errorListener) {
-        super(method, url, jsonRequest, listener, errorListener);
+                                   TroubadourRequestErrorHandler errorListener) {
+        super(method, url, jsonRequest, listener, (VolleyError e) -> errorListener.onError(new TroubadourRequestError(e)));
     }
 
     public TroubadourObjectRequest(String url, JSONObject jsonRequest,
                                    Response.Listener<JSONObject> listener,
-                                   Response.ErrorListener errorListener) {
-        super(url, jsonRequest, listener, errorListener);
+                                   TroubadourRequestErrorHandler errorListener) {
+        super(url, jsonRequest, listener, (VolleyError e) -> errorListener.onError(new TroubadourRequestError(e)));
     }
 
     public TroubadourObjectRequest(int method, String url, JSONArray jsonRequest,
                                    Response.Listener<JSONObject> listener,
-                                   Response.ErrorListener errorListener) {
-        super(method, url, null, listener, errorListener);
+                                   TroubadourRequestErrorHandler errorListener) {
+        super(method, url, null, listener, (VolleyError e) -> errorListener.onError(new TroubadourRequestError(e)));
         mBody = (jsonRequest == null) ? null : jsonRequest.toString();
     }
+
 
     @Override
     public Map<String, String> getHeaders() {
