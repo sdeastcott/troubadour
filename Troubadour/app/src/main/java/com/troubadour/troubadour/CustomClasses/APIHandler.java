@@ -79,8 +79,7 @@ public class APIHandler {
 
     /* getPreferences Error Handler */
     public void getPreferences(final Response.Listener<JSONObject> callback) {
-        getPreferences(callback, (TroubadourRequestError e) ->
-             Toast.makeText(mCtx, "Error: " + e, Toast.LENGTH_LONG).show());
+        getPreferences(callback, (TroubadourRequestError e) -> APIErrorHandler(e));
     }
 
 
@@ -102,8 +101,7 @@ public class APIHandler {
     /* putPreferences Error Handler */
     public void putPreferences(JSONArray selectedPreference,
                                final Response.Listener<JSONObject> callback) {
-        putPreferences(selectedPreference, callback, (TroubadourRequestError e) ->
-                Toast.makeText(mCtx, "Error: " + e, Toast.LENGTH_LONG).show());
+        putPreferences(selectedPreference, callback, (TroubadourRequestError e) -> APIErrorHandler(e));
     }
 
 
@@ -127,8 +125,7 @@ public class APIHandler {
     /* deletePreferences Error Handler */
     public void deletePreferences(String pref,
                                   final Response.Listener<JSONObject> callback){
-        deletePreferences(pref, callback, (TroubadourRequestError e) ->
-                Toast.makeText(mCtx,"Error: " + e, Toast.LENGTH_LONG).show());
+        deletePreferences(pref, callback, (TroubadourRequestError e) -> APIErrorHandler(e));
     }
 
     /* DELETE /Preferences for the Troubadour API with the androidID and an Array of Spotify URI strings */
@@ -153,8 +150,7 @@ public class APIHandler {
     /*  GET /Search Error Handler */
     public void getSearch(String searchQuery,
                           final Response.Listener<JSONObject> callback){
-        getSearch(searchQuery, callback, (TroubadourRequestError e) ->
-                Toast.makeText(mCtx, "Error: " + e, Toast.LENGTH_LONG).show());
+        getSearch(searchQuery, callback, (TroubadourRequestError e) -> APIErrorHandler(e));
     }
 
     /* GET /Search for the Troubadour API with the androidID and a search string */
@@ -170,5 +166,10 @@ public class APIHandler {
                 .setHeader("Content-Type","application/json");
         mRequestQueue.add(jsonObjectRequest);
 
+    }
+
+    public void APIErrorHandler(TroubadourRequestError e){
+        Toast.makeText(mCtx, "Network Error", Toast.LENGTH_LONG).show();
+        Log.e("TroubadourRequestError", e.toString());
     }
 }
