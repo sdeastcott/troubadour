@@ -127,6 +127,7 @@ public class PreferenceActivity extends AppCompatActivity {
             JSONArray jArtists = jData.getJSONArray("artists");
             JSONArray jTracks = jData.getJSONArray("tracks");
             JSONArray jAlbums = jData.getJSONArray("albums");
+            JSONArray jGenres = jData.getJSONArray("genres");
             JSONArray jSecondaryArtistArr;
             JSONObject jSecondaryArtistObj;
 
@@ -162,6 +163,33 @@ public class PreferenceActivity extends AppCompatActivity {
                     preferenceListItems.add(spotObject);
                     images = new String[3];
                 }
+
+                //Genres
+                if (jGenres.length() > 0){
+                    displayObject = new SpotifyObject("","","","display",null,"Genres","");
+                    preferenceListItems.add(displayObject);
+                }
+
+                for (int i = 0; i < jGenres.length(); i++){
+                    JSONObject pref = jGenres.getJSONObject(i);
+                    String type = pref.getString("type");
+                    id = pref.getString("spotify_id");
+                    name = pref.getString("name");
+                    uri = pref.getString("uri");
+
+                /*&unimplemented artwork
+                JSONArray tempArr = pref.getJSONArray("images");
+                if(tempArr.length() > 0){
+                    for (int j = 0; i < 3; j++){
+                        images[j] = tempArr.getJSONObject(j).getString("url");
+                    }
+                }
+                */
+
+                    SpotifyObject spotObject = new SpotifyObject(uri,"",id,type,null,name,"");
+                    preferenceListItems.add(spotObject);
+                }
+
 
                 if (jTracks.length() > 0) {
                     displayObject = new SpotifyObject("", "", "", "display", null, "Tracks", "");
