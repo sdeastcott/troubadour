@@ -101,6 +101,12 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
                 DownloadImageTask artistImageTask = new DownloadImageTask(artistImageView, sObject.getSpotifyImages()[2]);
                 artistImageTask.execute();
                 customView.setTag(sObject.getSpotifyID());
+            }else if(sObjectType.equals("genre")){
+                customView = lInflater.inflate(R.layout.custom_genre_list_row,parent,false);
+                TextView genreNameView = (TextView) customView.findViewById(R.id.genreListRowNameView);
+
+                genreNameView.setText(sObject.getSpotifyName());
+                customView.setTag(sObject.getSpotifyID());
             }else if(sObjectType.equals("display")) {
                 customView = lInflater.inflate(R.layout.custom_displayobjecttype_list_row, parent, false);
                 TextView displayTypeNameView = (TextView) customView.findViewById(R.id.displayListRowNameView);
