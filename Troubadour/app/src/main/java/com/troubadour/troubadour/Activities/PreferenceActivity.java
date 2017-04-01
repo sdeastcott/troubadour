@@ -134,6 +134,8 @@ public class PreferenceActivity extends AppCompatActivity {
             Log.e("Length", "jArtist length is:" + jArtists.length());
             Log.e("Length", "jTracks length is:" + jTracks.length());
             Log.e("Length", "jAlbum length is:" + jAlbums.length());
+
+
             if ((jArtists.length() == 0) && (jTracks.length() == 0) && (jAlbums.length() == 0)) {
                 displayObject = new SpotifyObject("", "", "", "display", null, "No Music Preferences", "");
                 preferenceListItems.add(displayObject);

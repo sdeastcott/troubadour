@@ -96,7 +96,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         preferenceListItemArrayList = new ArrayList<>();
         prefList = (ListView) findViewById(R.id.prefSearchResultsListView);
 
-       try {
+        try {
             SpotifyObject displayObject;
             String id;
             String name;
@@ -110,8 +110,68 @@ public class CreatePreferenceActivity extends AppCompatActivity {
             JSONArray jTracks = jData.getJSONArray("tracks");
             JSONArray jAlbums = jData.getJSONArray("albums");
             JSONArray jGenres = jData.getJSONArray("genres");
+            JSONObject jTopResult = jData.getJSONObject("top_result");
             JSONArray jSecondaryArtistArr;
             JSONObject jSecondaryArtistObj;
+
+            //TopResult
+            if (jTopResult.length() > 0){
+                displayObject = new SpotifyObject("","","","display",null,"Top Result","");
+                preferenceListItemArrayList.add(displayObject);
+
+                String type = jTopResult.getString("type");
+                id = jTopResult.getString("spotify_id");
+                name = jTopResult.getString("name");
+                uri = jTopResult.getString("uri");
+
+                if(type.equals("artist")) {
+                    JSONArray tempArr = jTopResult.getJSONArray("images");
+                    if(tempArr.length() > 0){
+                        for (int j = 0; j < 3; j++){
+                            images[j] = tempArr.getJSONObject(j).getString("url");
+                        }
+                    }
+                   SpotifyObject spotObject = new SpotifyObject(uri,"",id,type,images,name,"");
+                   preferenceListItemArrayList.add(spotObject);
+                   images = new String[3];
+
+                }else if(type.equals("album")){
+                    JSONArray tempArr = jTopResult.getJSONArray("images");
+                    if(tempArr.length() > 0){
+                        for (int j = 0; j < 3; j++){
+                            images[j] = tempArr.getJSONObject(j).getString("url");
+                        }
+                    }
+                    jSecondaryArtistArr = jTopResult.getJSONArray("artists");
+                    for (int j = 0; j < jSecondaryArtistArr.length(); j++) {
+                        if (j != 0) {
+                            secondaryArtist += ", ";
+                        }
+                        jSecondaryArtistObj = jSecondaryArtistArr.getJSONObject(j);
+                        secondaryArtist += jSecondaryArtistObj.getString("name");
+                    }
+                    SpotifyObject spotObject = new SpotifyObject(uri,"",id,type,images,name,secondaryArtist);
+                    preferenceListItemArrayList.add(spotObject);
+                    images = new String[3];
+                    secondaryArtist = "";
+
+                }else if(type.equals("track")){
+                    jSecondaryArtistArr = jTopResult.getJSONArray("artists");
+                    for (int j = 0; j < jSecondaryArtistArr.length(); j++) {
+                        if (j != 0) {
+                            secondaryArtist += ", ";
+                        }
+                        jSecondaryArtistObj = jSecondaryArtistArr.getJSONObject(j);
+                        secondaryArtist += jSecondaryArtistObj.getString("name");
+                    }
+                    SpotifyObject spotObject = new SpotifyObject(uri,"",id,type,images,name,secondaryArtist);
+                    preferenceListItemArrayList.add(spotObject);
+                    secondaryArtist = "";
+                }else{
+                    SpotifyObject spotObject = new SpotifyObject(uri,"",id,type,null,name,"");
+                    preferenceListItemArrayList.add(spotObject);
+                }
+            }
 
            //Artists
             if (jArtists.length() > 0) {
@@ -223,7 +283,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        preferenceListAdapter = new PreferenceListAdapter(this,R.layout.activity_preference, preferenceListItemArrayList);
+        preferenceListAdapter = new PreferenceListAdapter(this,R.layout.activity_create_preference, preferenceListItemArrayList);
         prefList.setAdapter(preferenceListAdapter);
         prefList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
