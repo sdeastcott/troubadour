@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initUI();
+        testLogin();
     }
 
 
@@ -40,6 +41,18 @@ public class MainActivity extends AppCompatActivity {
             }
          });
 
+    }
+
+    public void testLogin() {
+        Button loginButton = (Button) findViewById(R.id.loginButton);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                loginIntent.setClassName("com.troubadour.troubadour","com.troubadour.troubadour.Activities.LoginActivity");
+                MainActivity.this.startActivity(loginIntent);
+            }
+        });
     }
 
     @SuppressWarnings("unused")

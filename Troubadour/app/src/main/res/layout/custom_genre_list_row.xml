@@ -11,16 +11,15 @@
     tools:ignore="UseCompoundDrawables">
 
     <ImageView
-        android:id="@+id/albumListRowImageView"
+        android:id="@+id/genreListRowImageView"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_margin="1dp"
-        android:contentDescription="@string/listRowAlbumImageDescription"
-        app:srcCompat="@mipmap/ic_launcher"
-        />
+        android:contentDescription="@string/listRowGenreImageDescription"
+        app:srcCompat="@mipmap/ic_launcher" />
 
     <TextView
-        android:id="@+id/albumListRowNameView"
+        android:id="@+id/genreListRowNameView"
         android:layout_width="match_parent"
         android:layout_height="65dp"
         android:layout_marginBottom="1dp"
