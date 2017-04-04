@@ -16,6 +16,7 @@
         android:layout_margin="5dp"
         android:paddingTop="-5dip"
         android:text="TextView"
+        android:textStyle="bold"
         android:textSize="24sp"
         tools:ignore="HardcodedText" />
 
