@@ -10,6 +10,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,9 +26,6 @@
             android:name=".Activities.CreatePreferenceActivity"
             android:label="@string/title_activity_create_preference"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".Activities.LoginActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
