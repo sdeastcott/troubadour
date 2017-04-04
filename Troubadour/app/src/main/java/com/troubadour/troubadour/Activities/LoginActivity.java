@@ -129,11 +129,11 @@ public class LoginActivity extends Activity
 
         try{
 
-            JSONObject jsonResponse = new JSONObject(input);
-            JSONArray jsonMainNode = jsonResponse.optJSONArray("spotifyAppCred");
+            JSONObject jsonResponseObj = new JSONObject(input);
+            JSONObject jsonMainNode = jsonResponseObj.getJSONObject("spotifyAppCred");
 
-            JSONObject jsonChildNode = jsonMainNode.getJSONObject(0);
-            return jsonChildNode.optString("ClientID");
+            String strClient = jsonMainNode.getString("ClientID");
+            return strClient;
         }
         catch(JSONException e){
             Toast.makeText(this, "Error"+e.toString(), Toast.LENGTH_SHORT).show();
