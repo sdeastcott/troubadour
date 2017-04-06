@@ -172,4 +172,17 @@ public class APIHandler {
         Toast.makeText(mCtx, "Network Error", Toast.LENGTH_LONG).show();
         Log.e("TroubadourRequestError", e.toString());
     }
+
+
+    public void putLocation(JSONObject json) {
+        TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.PUT,
+                apiURL + "/location", json, (JSONObject obj) -> {
+            Log.e("Location response", obj.toString());
+        }, (TroubadourRequestError e) -> APIErrorHandler(e)
+        );
+        jsonObjectRequest
+                .setHeader("X-USER-ID", androidID)
+                .setHeader("Content-Type","application/json");
+        mRequestQueue.add(jsonObjectRequest);
+    }
 }
