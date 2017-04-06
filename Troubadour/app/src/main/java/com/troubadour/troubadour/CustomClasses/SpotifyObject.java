@@ -1,5 +1,7 @@
 package com.troubadour.troubadour.CustomClasses;
 
+import java.util.ArrayList;
+
 /**
  * Created by BBKiel on 3/6/2017.
  */
@@ -13,7 +15,7 @@ public class SpotifyObject {
     private String spotifyName;
     private String spotifySecondaryArtist;
     private String spotifyType;
-    private String[] spotifyImages = new String[3];
+    private ArrayList<String> spotifyImages = new ArrayList<>();
 
     public SpotifyObject(){
         this.spotifyURI = "";
@@ -23,7 +25,7 @@ public class SpotifyObject {
         this.spotifyType = "";
         this.spotifySecondaryArtist = "";
     }
-    public SpotifyObject(String spotURI, String spotURL, String spotID, String spotType, String[] spotImages, String spotName, String spotSecondaryArtist){
+    public SpotifyObject(String spotURI, String spotURL, String spotID, String spotType, ArrayList<String> spotImages, String spotName, String spotSecondaryArtist){
         this();
         this.spotifyURI = spotURI;
         this.spotifyURL = spotURL;
@@ -73,11 +75,11 @@ public class SpotifyObject {
         this.spotifyType = spotifyType;
     }
 
-    public String[] getSpotifyImages() {
+    public ArrayList<String> getSpotifyImages() {
         return spotifyImages;
     }
 
-    public void setSpotifyImages(String[] spotifyImages) {
+    public void setSpotifyImages(ArrayList<String> spotifyImages) {
         this.spotifyImages = spotifyImages;
     }
 

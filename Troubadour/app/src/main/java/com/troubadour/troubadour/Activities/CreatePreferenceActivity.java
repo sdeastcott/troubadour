@@ -103,7 +103,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
             String uri;
             String secondaryArtist="";
 
-            String[] images = new String[3];
+            ArrayList<String> images = new ArrayList<>();
 
             JSONObject jData = jsonObject.getJSONObject("data");
             JSONArray jArtists = jData.getJSONArray("artists");
@@ -127,19 +127,19 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 if(type.equals("artist")) {
                     JSONArray tempArr = jTopResult.getJSONArray("images");
                     if(tempArr.length() > 0){
-                        for (int j = 0; j < 3; j++){
-                            images[j] = tempArr.getJSONObject(j).getString("url");
+                        for (int j = 0; j < tempArr.length(); j++){
+                            images.add(tempArr.getJSONObject(j).getString("url"));
                         }
                     }
                    SpotifyObject spotObject = new SpotifyObject(uri,"",id,type,images,name,"");
                    preferenceListItemArrayList.add(spotObject);
-                   images = new String[3];
+                   images = new ArrayList<>();
 
                 }else if(type.equals("album")){
                     JSONArray tempArr = jTopResult.getJSONArray("images");
                     if(tempArr.length() > 0){
-                        for (int j = 0; j < 3; j++){
-                            images[j] = tempArr.getJSONObject(j).getString("url");
+                        for (int j = 0; j < tempArr.length(); j++){
+                            images.add(tempArr.getJSONObject(j).getString("url"));
                         }
                     }
                     jSecondaryArtistArr = jTopResult.getJSONArray("artists");
@@ -152,7 +152,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                     }
                     SpotifyObject spotObject = new SpotifyObject(uri,"",id,type,images,name,secondaryArtist);
                     preferenceListItemArrayList.add(spotObject);
-                    images = new String[3];
+                    images = new ArrayList<>();
                     secondaryArtist = "";
 
                 }else if(type.equals("track")){
@@ -186,15 +186,15 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 name = pref.getString("name");
                 JSONArray tempArr = pref.getJSONArray("images");
                 if (tempArr.length() > 0) {
-                    for (int j = 0; j < 3; j++) {
-                        images[j] = tempArr.getJSONObject(j).getString("url");
+                    for (int j = 0; j < tempArr.length(); j++) {
+                        images.add(tempArr.getJSONObject(j).getString("url"));
                     }
                 }
                 uri = pref.getString("uri");
 
                 SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name, "");
                 preferenceListItemArrayList.add(spotObject);
-                images = new String[3];
+                images = new ArrayList<>();
             }
 
             //Genres
@@ -262,7 +262,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 JSONArray tempArr = pref.getJSONArray("images");
                 if (tempArr.length() > 0) {
                     for (int j = 0; j < 3; j++) {
-                        images[j] = tempArr.getJSONObject(j).getString("url");
+                        images.add(tempArr.getJSONObject(j).getString("url"));
                     }
                 }
                 uri = pref.getString("uri");
@@ -275,7 +275,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
 
                 SpotifyObject spotObject = new SpotifyObject(uri, "", id, type, images, name, secondaryArtist);
                 preferenceListItemArrayList.add(spotObject);
-                images = new String[3];
+                images = new ArrayList<>();
                 secondaryArtist = "";
             }
 

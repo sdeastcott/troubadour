@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initUI();
         CLIENT_ID = getCLIENT_ID();
+        initUI();
     }
 
     public void initUI(){

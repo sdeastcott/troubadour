@@ -10,7 +10,7 @@
     android:weightSum="1"
     tools:ignore="UseCompoundDrawables">
 
-    <ImageView
+    <com.troubadour.troubadour.CustomClasses.CircleImageView
         android:id="@+id/genreListRowImageView"
         android:layout_width="64dp"
         android:layout_height="64dp"
