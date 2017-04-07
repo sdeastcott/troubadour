@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -115,6 +116,7 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
                     Bitmap bm = getBitmapFromVectorDrawable(lContext, R.mipmap.ic_launcher);
                     albumImageView.setLocalImageBitmap(bm);
                     albumImageView.setDefaultImageResId(R.mipmap.ic_blank);
+                    albumImageView.setBackgroundColor(Color.argb(255,48,48,48));
 
                 }else {
                     int lastImage = sObject.getSpotifyImages().size();
@@ -122,11 +124,13 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
                         Bitmap bm = getBitmapFromVectorDrawable(lContext, R.mipmap.ic_launcher);
                         albumImageView.setLocalImageBitmap(bm);
                         albumImageView.setDefaultImageResId(R.mipmap.ic_blank);
+                        albumImageView.setBackgroundColor(Color.argb(255,48,48,48));
 
                     } else {
                         String image = sObject.getSpotifyImages().get(lastImage - 1);
                         albumImageView.setImageUrl(image, mImageLoader);
                         albumImageView.setDefaultImageResId(R.mipmap.ic_blank);
+                        albumImageView.setBackgroundColor(Color.argb(255,48,48,48));
                     }
                 }
                 customView.setTag(sObject.getSpotifyID());
@@ -149,17 +153,21 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
                         Bitmap bm = getBitmapFromVectorDrawable(lContext, R.mipmap.ic_launcher);
                         artistImageView.setDefaultImageResId(R.mipmap.ic_blank);
                         artistImageView.setLocalImageBitmap(bm);
+                        artistImageView.setBackgroundColor(Color.BLACK);
+                        artistImageView.setBackgroundColor(Color.argb(255,48,48,48));
                 }else{
                     int lastImage = sObject.getSpotifyImages().size();
                     if (lastImage == 0) {
                         Bitmap bm = getBitmapFromVectorDrawable(lContext, R.mipmap.ic_launcher);
                         artistImageView.setLocalImageBitmap(bm);
                         artistImageView.setDefaultImageResId(R.mipmap.ic_blank);
+                        artistImageView.setBackgroundColor(Color.argb(255,48,48,48));
 
                     } else {
                         String image = sObject.getSpotifyImages().get(lastImage - 1);
                         artistImageView.setImageUrl(image, mImageLoader);
                         artistImageView.setDefaultImageResId(R.mipmap.ic_blank);
+                        artistImageView.setBackgroundColor(Color.argb(255,48,48,48));
                     }
                 }
                 artistNameView.setText(sObject.getSpotifyName());

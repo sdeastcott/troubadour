@@ -12,6 +12,7 @@
 
     <com.troubadour.troubadour.CustomClasses.CircleImageView
         android:id="@+id/artistListRowImageView"
+        android:theme="@style/Troubadour_1"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_margin="1dp"

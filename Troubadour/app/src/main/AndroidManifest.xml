@@ -13,11 +13,11 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Troubadour_1">
 
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN" android:theme="@style/Troubadour_1"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -25,12 +25,12 @@
         <activity
             android:name=".Activities.PreferenceActivity"
             android:label="@string/title_activity_preference"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/Troubadour_1" />
 
         <activity
             android:name=".Activities.CreatePreferenceActivity"
             android:label="@string/title_activity_create_preference"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/Troubadour_1" />
 
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"

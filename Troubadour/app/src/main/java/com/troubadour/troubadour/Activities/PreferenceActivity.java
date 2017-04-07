@@ -84,8 +84,6 @@ public class PreferenceActivity extends AppCompatActivity {
            return true;
         }
         if(id == R.id.trashCanPreferenceListActionBar){
-            //DeleteUserPreferences deleteUserPreferences = new DeleteUserPreferences(selectedPreferenceListItems, apiURL);
-            //deleteUserPreferences.execute();
             String strPref = "";
             for (String selectedPref : selectedPreferenceListItems) {
                 strPref += selectedPref + ",";
