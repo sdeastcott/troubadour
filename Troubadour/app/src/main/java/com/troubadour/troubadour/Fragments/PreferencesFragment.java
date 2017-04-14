@@ -1,80 +1,87 @@
-package com.troubadour.troubadour.Activities;
+package com.troubadour.troubadour.Fragments;
+
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
+import com.troubadour.troubadour.Activities.CreatePreferenceActivity;
 import com.troubadour.troubadour.Adapters.PreferenceListAdapter;
 import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.CustomClasses.SpotifyObject;
 import com.troubadour.troubadour.R;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 
-public class PreferenceActivity extends AppCompatActivity {
+
+public class PreferencesFragment extends Fragment {
 
     private APIHandler apiHandler;
     private String apiURL = "https://api.troubadour.tk";
     private Menu prefMenu;
     private MenuInflater prefMenuInflater;
     private ListView lView;
+    private View fragView;
     private ArrayList<SpotifyObject> preferenceListItems = new ArrayList<>();
     private ArrayList<String> selectedPreferenceListItems = new ArrayList<>();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_preference);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Music Preferences");
-        setSupportActionBar(toolbar);
+    public PreferencesFragment() {
+        // Required empty public constructor
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        setHasOptionsMenu(true);
+        fragView = inflater.inflate(R.layout.fragment_preferences, container, false);
+
+        FloatingActionButton fab = (FloatingActionButton) fragView.findViewById(R.id.floatingActionButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Create and Start CreatePreferenceActivity
-                Intent preferenceIntent = new Intent(PreferenceActivity.this, CreatePreferenceActivity.class);
+                Intent preferenceIntent = new Intent(getActivity(), CreatePreferenceActivity.class);
                 preferenceIntent.setClassName("com.troubadour.troubadour","com.troubadour.troubadour.Activities.CreatePreferenceActivity");
-                PreferenceActivity.this.startActivity(preferenceIntent);
+                getActivity().startActivity(preferenceIntent);
             }
         });
-
         initUI();
-    }
-
-    public void initUI(){
-        preferenceListItems = new ArrayList<>();
-        apiHandler = new APIHandler(getApplicationContext());
-        apiHandler.getPreferences(this::updateListView);
+        return fragView;
     }
 
     @Override
-    public void onRestart(){
-        super.onRestart();
+    public void onResume(){
+        super.onResume();
         initUI();
         //GetUserPreferences userPreferences = new GetUserPreferences(apiURL);
         //userPreferences.execute();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        prefMenuInflater = getMenuInflater();
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater){
+        prefMenuInflater = menuInflater;
         prefMenu = menu;
-        prefMenuInflater.inflate(R.menu.preference_activity_trash, prefMenu);
-        return true;
+        prefMenuInflater.inflate(R.menu.troubadour_menu, prefMenu);
+        prefMenu.findItem(R.id.trashCanPreferenceListActionBar).setVisible(false);
+        super.onCreateOptionsMenu(prefMenu,prefMenuInflater);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
@@ -97,11 +104,11 @@ public class PreferenceActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void cleanUpDelete(JSONObject jsonObject){
-        lView.clearChoices();
-        MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
-        item.setVisible(false);
-        initUI();
+    public void initUI(){
+        preferenceListItems = new ArrayList<>();
+        apiHandler = new APIHandler(getContext());
+        fragView.findViewById(R.id.preferenceProgressBar).setVisibility(View.VISIBLE);
+        apiHandler.getPreferences(this::updateListView);
     }
 
     //Populates ListView with a given jsonArray
@@ -109,7 +116,7 @@ public class PreferenceActivity extends AppCompatActivity {
     //Sets Adapter to the ListArray<SpotifyObject>
     public void updateListView(JSONObject jsonObject){
         selectedPreferenceListItems = new ArrayList<>();
-        lView = (ListView) findViewById(R.id.preferenceListView);
+        lView = (ListView) fragView.findViewById(R.id.preferenceListView);
 
         try {
             SpotifyObject displayObject;
@@ -253,7 +260,7 @@ public class PreferenceActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        PreferenceListAdapter lAdapter = new PreferenceListAdapter(lView.getContext(), R.layout.content_preference, preferenceListItems);
+        PreferenceListAdapter lAdapter = new PreferenceListAdapter(lView.getContext(), R.layout.fragment_preferences, preferenceListItems);
         lView.setAdapter(lAdapter);
         lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -278,5 +285,13 @@ public class PreferenceActivity extends AppCompatActivity {
 
             }
         });
+        fragView.findViewById(R.id.preferenceProgressBar).setVisibility(View.INVISIBLE);
+    }
+
+    public void cleanUpDelete(JSONObject jsonObject){
+        lView.clearChoices();
+        MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
+        item.setVisible(false);
+        initUI();
     }
 }

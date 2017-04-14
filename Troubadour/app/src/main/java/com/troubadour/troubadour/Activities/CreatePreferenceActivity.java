@@ -63,6 +63,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
 
     //Initializes UI widgets for the Activity
     public void initUI(){
+        findViewById(R.id.createPreferenceProgressBar).setVisibility(View.INVISIBLE);
         apiHandler = new APIHandler(getApplicationContext());
         //apiHandler.getPreferences(this::updateListView);
 
@@ -70,6 +71,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         queryEdit.setOnKeyListener(new View.OnKeyListener(){
             public boolean onKey(View v, int keyCode, KeyEvent event){
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    findViewById(R.id.createPreferenceProgressBar).setVisibility(View.VISIBLE);
                     processSearch(v,queryEdit);
                     return true;
                 }
@@ -104,6 +106,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
 
     //Get Search
     public void getSearch(String query){
+
         apiHandler.getSearch(query,this::updateListView);
     }
 
@@ -319,6 +322,7 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 }
             }
         });
+        findViewById(R.id.createPreferenceProgressBar).setVisibility(View.INVISIBLE);
     }
     public void PutPreference(JSONObject body) {
         JSONArray wrapper = new JSONArray();

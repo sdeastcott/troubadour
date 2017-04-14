@@ -1,0 +1,47 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.troubadour.troubadour.Fragments.HostFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <include
+        layout="@layout/content_host_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+    <RadioGroup
+        android:id="@+id/radioTabs"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <RadioButton
+            android:id="@+id/nearbyRadioButton"
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:button="@android:color/transparent"
+            android:layout_gravity="center"
+            android:text="Nearby" />
+
+        <RadioButton
+            android:id="@+id/blacklistedRadioButton"
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:button="@android:color/transparent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="Blacklisted" />
+
+    </RadioGroup>
+
+</RelativeLayout>

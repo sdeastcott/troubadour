@@ -11,6 +11,13 @@
     tools:context="com.troubadour.troubadour.Activities.CreatePreferenceActivity"
     tools:showIn="@layout/activity_create_preference">
 
+        <ProgressBar
+            android:id="@+id/createPreferenceProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
         <EditText
             android:id="@+id/prefSearchEditText"
             android:layout_width="match_parent"
@@ -30,7 +37,8 @@
             android:imeOptions="actionSearch"
             android:inputType="textPersonName"
             android:textColorHint="@android:color/white"
-            android:theme="@style/Troubadour_1" />
+            android:theme="@style/Troubadour_1"
+            tools:ignore="RtlHardcoded,RtlSymmetry" />
 
         <ListView
             android:id="@+id/prefSearchResultsListView"
