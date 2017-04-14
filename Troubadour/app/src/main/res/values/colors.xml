@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="accent_material_dark">#009625</color>
     <color name="troubadour_dark">#303030</color>
+    <color name="primary_dark_material_dark">#829393</color>
 </resources>

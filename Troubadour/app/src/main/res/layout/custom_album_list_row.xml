@@ -38,7 +38,6 @@
             android:maxLines="1"
             android:ellipsize="end"
             android:gravity="center"
-            android:text="TextView"
             android:theme="@style/Troubadour_1"
             android:textAlignment="textStart"
             android:textSize="24sp"
@@ -58,7 +57,7 @@
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:gravity="center"
-            android:text="TextView"
+            android:textColor="@android:color/darker_gray"
             android:textAlignment="textStart"
             android:textSize="16sp" />
     </LinearLayout>

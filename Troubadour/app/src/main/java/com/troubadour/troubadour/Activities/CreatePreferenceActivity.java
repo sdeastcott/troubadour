@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -66,22 +67,39 @@ public class CreatePreferenceActivity extends AppCompatActivity {
         //apiHandler.getPreferences(this::updateListView);
 
         final EditText queryEdit = (EditText) findViewById(R.id.prefSearchEditText);
+        queryEdit.setOnKeyListener(new View.OnKeyListener(){
+            public boolean onKey(View v, int keyCode, KeyEvent event){
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    processSearch(v,queryEdit);
+                    return true;
+                }
+                return false;
+            }
+
+        });
+        /*
         Button createButton = (Button) findViewById(R.id.prefSearchButton);
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Dismisses Keyboard
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(queryEdit.getWindowToken(), 0);
-
-                if(TextUtils.isEmpty(queryEdit.getText())){
-                    Toast.makeText(getBaseContext(), "Please enter a valid search", Toast.LENGTH_LONG).show();
-                }else {
-                    String query = queryEdit.getText().toString();
-                    getSearch(query);
-                }
+                processSearch(v,queryEdit);
             }
         });
+        */
+    }
+
+    public void processSearch(View v, EditText queryEdit){
+        //Dismisses Keyboard
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(queryEdit.getWindowToken(), 0);
+
+        if(TextUtils.isEmpty(queryEdit.getText())){
+            Toast.makeText(getBaseContext(), "Please enter a valid search", Toast.LENGTH_LONG).show();
+        }else {
+            String query = queryEdit.getText().toString();
+            getSearch(query);
+        }
+
     }
 
     //Get Search
