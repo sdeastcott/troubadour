@@ -185,4 +185,22 @@ public class APIHandler {
                 .setHeader("Content-Type","application/json");
         mRequestQueue.add(jsonObjectRequest);
     }
+
+    public void getNearby(String lat, String lon, String radius,
+                          final Response.Listener<JSONObject> callback){
+        getNearby(lat, lon, radius, callback, (TroubadourRequestError e) -> APIErrorHandler(e));
+    }
+
+
+    public void getNearby(String lat, String lon, String radius,
+                          final Response.Listener<JSONObject> callback,
+                          final TroubadourRequestErrorHandler errorHandler){
+        TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.GET,
+                apiURL + "/nearby?lat=" + lat + "&long=" + lon + "&radius=" + radius, callback, errorHandler
+        );
+        jsonObjectRequest
+                .setHeader("X-USER-ID",androidID)
+                .setHeader("Content-Type","application/json");
+        mRequestQueue.add(jsonObjectRequest);
+    }
 }

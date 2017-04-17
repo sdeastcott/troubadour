@@ -14,33 +14,59 @@
 
     <RadioGroup
         android:id="@+id/radioTabs"
-        android:layout_gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:background="?attr/colorBackgroundFloating"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
 
         <RadioButton
+            android:id="@+id/radioButton"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:text="RadioButton" />
+
+        <RadioButton
             android:id="@+id/nearbyRadioButton"
-            android:padding="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textAlignment="center"
-            android:button="@android:color/transparent"
             android:layout_gravity="center"
-            android:text="Nearby" />
+            android:layout_weight="1"
+            android:background="@drawable/radio_tab_background"
+            android:button="@android:color/transparent"
+            android:padding="10dp"
+            android:text="Nearby"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:text="RadioButton" />
 
         <RadioButton
             android:id="@+id/blacklistedRadioButton"
-            android:padding="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:button="@android:color/transparent"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:text="Blacklisted" />
+            android:background="@drawable/radio_tab_background"
+            android:button="@android:color/transparent"
+            android:padding="10dp"
+            android:text="Blacklisted"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:text="RadioButton" />
 
     </RadioGroup>
 
