@@ -15,13 +15,13 @@ public class SplashActvity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+        //overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         setContentView(R.layout.activity_splash);
 
         Thread timerThread = new Thread(){
             public void run(){
                 try{
-                    sleep(1000);
+                    sleep(2000);
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }finally{
