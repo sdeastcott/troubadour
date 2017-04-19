@@ -1,6 +1,8 @@
 package com.troubadour.troubadour.Fragments;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -18,21 +20,16 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
-
 import com.troubadour.troubadour.Adapters.PreferenceListAdapter;
 import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.CustomClasses.TroubadourLocationManager;
 import com.troubadour.troubadour.CustomClasses.SpotifyObject;
 import com.troubadour.troubadour.CustomClasses.TroubadourLocationObject;
 import com.troubadour.troubadour.R;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Iterator;
 
 
 public class HostFragment extends Fragment {
@@ -46,6 +43,7 @@ public class HostFragment extends Fragment {
     private ArrayList<SpotifyObject> blacklistListItems;
     private ArrayList<SpotifyObject> toDeleteListItems;
     private ArrayList<String> selectedPreferenceListItems;
+    private ArrayList<String> nearbyListItemsStrings;
     private TroubadourLocationManager troubadourLocationManager;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ProgressBar progressBar;
@@ -65,13 +63,14 @@ public class HostFragment extends Fragment {
         setHasOptionsMenu(true);
 
         troubadourLocationManager = new TroubadourLocationManager(getContext());
-        apiHandler = new APIHandler(getContext());
+        apiHandler = new APIHandler(getActivity(),getContext());
         fragView = inflater.inflate(R.layout.fragment_host, container, false);
 
         selectedPreferenceListItems = new ArrayList<>();
         nearbyListItems = new ArrayList<>();
         blacklistListItems = new ArrayList<>();
         toDeleteListItems = new ArrayList<>();
+        nearbyListItemsStrings = new ArrayList<>();
 
         nearbyButton = (RadioButton) fragView.findViewById(R.id.nearbyRadioButton);
         nearbyButton.setChecked(true);
@@ -151,6 +150,12 @@ public class HostFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("nearbyPreferences",nearbyListItemsStrings);
+    }
+
     public void removeSelectedPreferences(){
         if (nearbyButton.isChecked()) {
             //Cant concurrently check if selected, delete and continue iterating
@@ -161,7 +166,11 @@ public class HostFragment extends Fragment {
                         toDeleteListItems.add(spotifyObject);
                     }
                 }
+
+                //For serializable arraylist
+                nearbyListItemsStrings.remove(item);
             }
+
             for (SpotifyObject sObject : toDeleteListItems){
                 nearbyListItems.remove(sObject);
             }
@@ -187,12 +196,10 @@ public class HostFragment extends Fragment {
     }
 
     public void getNearbyPreferences(){
-        TroubadourLocationObject locationObject = troubadourLocationManager.getLocation();
-        Double lat = locationObject.getLatitude();
-        Double lon = locationObject.getLongitude();
+
         //Get Radius from pref later
-        int radius = 500000000;
-        apiHandler.getNearby(lat.toString(),lon.toString(),String.valueOf(radius),this::loadNearbyPreferences);
+        String radius = "500000000";
+        apiHandler.getNearby(String.valueOf(radius),this::loadNearbyPreferences);
     }
 
     public void getBlacklistPreferences(){
@@ -202,7 +209,8 @@ public class HostFragment extends Fragment {
     }
 
     public void loadNearbyPreferences(JSONObject jsonObject){
-        nearbyListItems = new ArrayList<>();
+        nearbyListItems.clear();
+        nearbyListItemsStrings.clear();
         lView = (ListView) fragView.findViewById(R.id.prefNearbyListView);
 
         try {
@@ -376,6 +384,12 @@ public class HostFragment extends Fragment {
             }
         });
         progressBar.setVisibility(View.INVISIBLE);
+        setNearbyListItemsToSharedPreference();
+
+        //Add every item in NearbyItems to NearbyItemsStrings
+        for(SpotifyObject sObject : nearbyListItems){
+            nearbyListItemsStrings.add(sObject.getSpotifyURI());
+        }
     }
 
     public void loadBlacklistPreferences(JSONObject jsonObject){
@@ -551,6 +565,7 @@ public class HostFragment extends Fragment {
 
             }
         });
+        setNearbyListItemsToSharedPreference();
         progressBar.setVisibility(View.INVISIBLE);
     }
 
@@ -564,6 +579,18 @@ public class HostFragment extends Fragment {
             lView.setAdapter(lAdapter);
         }
 
+    }
+
+    public void setNearbyListItemsToSharedPreference(){
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("NearbyPreferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < nearbyListItems.size(); i++){
+            sb.append(nearbyListItems.get(i).getSpotifyURI()).append(",");
+        }
+        sharedPreferencesEditor.putString("NearbyPreferences",sb.toString());
+        sharedPreferencesEditor.commit();
     }
 
 

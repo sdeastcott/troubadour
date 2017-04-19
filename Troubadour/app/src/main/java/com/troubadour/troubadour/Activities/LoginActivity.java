@@ -3,27 +3,18 @@ package com.troubadour.troubadour.Activities;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
-import android.net.Uri;
-import android.preference.*;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import com.troubadour.troubadour.R;
-
-
 import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,12 +26,13 @@ public class LoginActivity extends Activity
     private String CLIENT_ID;
     private String REDIRECT_URI = "troubadour://callback";
     private int REQUEST_CODE = 1337;
+    private Boolean isLoggedIn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_main);
-
         CLIENT_ID = getCLIENT_ID();
         openLogin();
     }

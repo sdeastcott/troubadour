@@ -2,36 +2,24 @@ package com.troubadour.troubadour.Adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.AppCompatDrawableManager;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.android.volley.Network;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
 import com.troubadour.troubadour.CustomClasses.CircleImageView;
 import com.troubadour.troubadour.R;
 import com.troubadour.troubadour.CustomClasses.SpotifyObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 /**
@@ -51,14 +39,11 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
         private ImageLoader mImageLoader;
         private Context lContext;
         private ArrayList<SpotifyObject> lPreferenceListItem;
-        private int lTextViewResourceId;
-        private static LayoutInflater inflater = null;
 
         public PreferenceListAdapter(Context context, int textViewResourceId, ArrayList<SpotifyObject> _lPreferenceListItem) {
             super(context, R.layout.custom_preference_list_row, _lPreferenceListItem);
             lPreferenceListItem = _lPreferenceListItem;
             lContext = context;
-            lTextViewResourceId = textViewResourceId;
             mRequestQueue = Volley.newRequestQueue(lContext);
             initImageLoader();
         }
@@ -213,7 +198,7 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
             return true;
         }
 
-    public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
+    private static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
         Drawable drawable = AppCompatDrawableManager.get().getDrawable(context, drawableId);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             drawable = (DrawableCompat.wrap(drawable)).mutate();

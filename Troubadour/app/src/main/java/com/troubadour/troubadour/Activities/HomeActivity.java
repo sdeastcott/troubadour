@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -17,42 +19,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import java.util.ArrayList;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.R;
 import com.troubadour.troubadour.CustomClasses.TroubadourFragmentPagerAdapter;
 
-import java.util.ArrayList;
-import java.util.jar.Manifest;
-
 public class HomeActivity extends AppCompatActivity {
 
     private MenuInflater prefMenuInflater;
     private Menu prefMenu;
-    private APIHandler apiHandler;
-    private ArrayList<String> selectedPreferenceListItems;
     private static final int canUseLocation = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        requestLocationPermissions();
-
-        //Sets up The ViewPager for the Fragments
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(new TroubadourFragmentPagerAdapter(getSupportFragmentManager(),HomeActivity.this));
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
-        viewPager.setCurrentItem(1,false);
-        tabLayout.setupWithViewPager(viewPager);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Troubadour");
-        setSupportActionBar(toolbar);
+        initUI();
+        //PermissionRequestor permRequestor= new PermissionRequestor();
+        //permRequestor.execute();
     }
 
     @Override
@@ -93,8 +82,10 @@ public class HomeActivity extends AppCompatActivity {
                     editor.commit();
                     Button loginButton = (Button) findViewById(R.id.loginButton);
                     Button logoutButton = (Button) findViewById(R.id.logoutButton);
+                    Button generatePlaylistButton = (Button) findViewById(R.id.generatePlaylistButton);
                     loginButton.setVisibility(View.GONE);
                     logoutButton.setVisibility(View.VISIBLE);
+                    generatePlaylistButton.setAlpha(1f);
 
                     break;
 
@@ -109,26 +100,58 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int resultCode, String permissions[], int[] grantResults){
-        switch(resultCode) {
-            case canUseLocation:
+    public void initUI(){
+        //Sets up The ViewPager for the Fragments
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(new TroubadourFragmentPagerAdapter(getSupportFragmentManager(),HomeActivity.this));
 
-                if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                    Toast.makeText(this, "Troubadour Requires Location Permissions: Try Again", Toast.LENGTH_SHORT).show();
-                    requestLocationPermissions();
-                }
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        viewPager.setCurrentItem(1,false);
+        tabLayout.setupWithViewPager(viewPager);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Troubadour");
+        setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    private class PermissionRequestor extends AsyncTask<Void,Void,Void> {
+
+        public Void doInBackground(Void... params){
+            requestLocationPermissions();
+            return null;
+        }
+
+        public void onProgressUpdate(Void... progress){
+
+        }
+
+        public void onPostExecute(Void... result){
+            initUI();
+        }
+
+        public void onRequestPermissionsResult(int resultCode, String permissions[], int[] grantResults) {
+            switch (resultCode) {
+                case canUseLocation:
+
+                    if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                        Toast.makeText(HomeActivity.this, "Troubadour Requires Location Permissions: Try Again", Toast.LENGTH_SHORT).show();
+                        requestLocationPermissions();
+                    }
+            }
+        }
+
+        public void requestLocationPermissions() {
+            //If permission not granted
+            if (ContextCompat.checkSelfPermission(HomeActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                        HomeActivity.this,
+                        new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                        canUseLocation
+                );
+            }
         }
     }
 
-    public void requestLocationPermissions() {
-        //If permission not granted
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                    canUseLocation
-            );
-        }
-    }
+
 }

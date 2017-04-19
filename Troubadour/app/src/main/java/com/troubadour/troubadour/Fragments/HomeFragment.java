@@ -1,11 +1,15 @@
 package com.troubadour.troubadour.Fragments;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,8 +22,13 @@ import android.widget.Toast;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+import com.troubadour.troubadour.CustomClasses.APIHandler;
+import com.troubadour.troubadour.CustomClasses.TroubadourLocationManager;
+import com.troubadour.troubadour.CustomClasses.TroubadourLocationObject;
+import com.troubadour.troubadour.CustomClasses.LocationService;
 import com.troubadour.troubadour.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,13 +44,16 @@ import java.io.InputStreamReader;
 public class HomeFragment extends Fragment {
 
     private int REQUEST_CODE = 1337;
+    private APIHandler apiHandler;
     private String CLIENT_ID;
     private String REDIRECT_URI = "troubadour://callback";
     private String troubadourSecret =  "troubadourAPI.secret";
     private String Token;
     private Button logoutButton;
     private Button loginButton;
+    private Button generatePlaylistButton;
     private SharedPreferences sharedPref;
+    private TroubadourLocationManager troubadourLocationManager;
     private View fragView;
 
     public HomeFragment() {
@@ -53,8 +65,11 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         setHasOptionsMenu(true);
+
         CLIENT_ID = getCLIENT_ID();
         fragView = inflater.inflate(R.layout.fragment_home, container, false);
+        troubadourLocationManager = new TroubadourLocationManager(getContext());
+        apiHandler = new APIHandler(getActivity(),getContext());
         initUI();
         return fragView;
     }
@@ -102,7 +117,48 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        //Generate Playlist Button and Listener
+        generatePlaylistButton = (Button) fragView.findViewById(R.id.generatePlaylistButton);
+        sharedPref = getActivity().getSharedPreferences("AuthenticationResponse", Context.MODE_PRIVATE);
+        Token = sharedPref.getString("Token", null);
+        Log.e("Spotify APIToken","Token is: " + Token);
+        if(Token == null){
+            generatePlaylistButton.setAlpha(.5f);
+
+        }else {
+            generatePlaylistButton.setAlpha(1f);
+        }
+        generatePlaylistButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Token = sharedPref.getString("Token", null);
+                if(Token == null) {
+                    Toast.makeText(getActivity(), "Please Login to Spotify Premium in order to Generate a Playlist", Toast.LENGTH_SHORT).show();
+                }else {
+                    generatePlaylist();
+                }
+            }
+        });
     }
+
+    public void generatePlaylist(){
+        TroubadourLocationObject locationObject = troubadourLocationManager.getLocation();
+        Double lat = locationObject.getLatitude();
+        Double lon = locationObject.getLongitude();
+        //String sLat = lat.toString();
+        //String sLon  = lon.toString();
+        String sLat = String.valueOf(33.2005847);
+        String sLon = String.valueOf(-87.5228543);
+        String sRadius = String.valueOf(5000000);
+
+        sharedPref = getActivity().getSharedPreferences("AuthenticationResponse", Context.MODE_PRIVATE);
+        Token = sharedPref.getString("Token", null);
+        SharedPreferences nearbyPreferences = getActivity().getSharedPreferences("NearbyPreferences", Context.MODE_PRIVATE);
+        String prefs = nearbyPreferences.getString("NearbyPreferences", null);
+        String prefsArr[] = prefs.split(",");
+        apiHandler.postPlaylist(sLat, sLon, sRadius, prefsArr, Token, this::openInNewWindow);
+    }
+
     private void switchUser() {
         int REQUEST_CODE = 1337;
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(getCLIENT_ID(),
@@ -123,8 +179,6 @@ public class HomeFragment extends Fragment {
         AuthenticationClient.openLoginActivity(getActivity(), REQUEST_CODE, request);
     }
 
-
-
     //Retrieves the ClientID from Spotify
     public String getCLIENT_ID(){
 
@@ -138,7 +192,7 @@ public class HomeFragment extends Fragment {
         try {
 
             //retrieves file from the assets folder
-            as = getActivity().getBaseContext().getAssets();
+            as = getActivity().getApplicationContext().getAssets();
             is = as.open(troubadourSecret);
             br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
             while ((temp = br.readLine()) != null)
@@ -158,14 +212,37 @@ public class HomeFragment extends Fragment {
         try{
 
             JSONObject jsonResponse = new JSONObject(input);
-            JSONObject jsonMainNode = jsonResponse.getJSONObject("spotifyAppCred");
+            JSONArray jsonMainNode = jsonResponse.optJSONArray("spotifyAppCred");
 
-            String strClient = jsonMainNode.getString("ClientID");
-            return strClient;
+            JSONObject strClient = jsonMainNode.getJSONObject(0);
+            return strClient.optString("ClientID");
         }
         catch(JSONException e){
             Toast.makeText(getActivity(), "Error"+e.toString(), Toast.LENGTH_SHORT).show();
             return null;
         }
+    }
+
+    public void openInNewWindow(JSONObject jObjectResult){
+        //do something
+
+        try {
+            SharedPreferences nearbyPreferences = getActivity().getSharedPreferences("NearbyPreferences",Context.MODE_PRIVATE);
+            String userID = nearbyPreferences.getString("spotifyUserID",null);
+
+            JSONObject jData = jObjectResult.getJSONObject("data");
+            //String resultURL = "https://open.spotify.com/user/" + jData.get("created_by").toString() + "/playlist/" + jData.get("playlist_id").toString();
+            String resultURI = "spotify:playlist:" + jData.get("playlist_id").toString();
+
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(resultURI));
+            if(browserIntent.resolveActivity(getActivity().getPackageManager()) != null)
+                startActivity(browserIntent);
+            else {
+                Toast.makeText(getActivity(), "Your Playlist has been generated but you do not have Spotify installed", Toast.LENGTH_SHORT).show();
+            }
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+
     }
 }

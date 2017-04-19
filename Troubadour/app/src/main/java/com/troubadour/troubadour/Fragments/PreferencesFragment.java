@@ -31,7 +31,6 @@ import java.util.ArrayList;
 public class PreferencesFragment extends Fragment {
 
     private APIHandler apiHandler;
-    private String apiURL = "https://api.troubadour.tk";
     private Menu prefMenu;
     private MenuInflater prefMenuInflater;
     private ListView lView;
@@ -106,7 +105,7 @@ public class PreferencesFragment extends Fragment {
 
     public void initUI(){
         preferenceListItems = new ArrayList<>();
-        apiHandler = new APIHandler(getContext());
+        apiHandler = new APIHandler(getActivity(),getContext());
         fragView.findViewById(R.id.preferenceProgressBar).setVisibility(View.VISIBLE);
         apiHandler.getPreferences(this::updateListView);
     }

@@ -1,8 +1,14 @@
 package com.troubadour.troubadour.CustomClasses;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.LruCache;
 import android.widget.Toast;
@@ -12,11 +18,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import com.troubadour.troubadour.CustomClasses.TroubadourRequestError;
-import com.troubadour.troubadour.CustomClasses.TroubadourRequestErrorHandler;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
 
 /**
  * APIHandler is a central class that handles request to the Troubadour Server
@@ -25,16 +33,21 @@ import org.json.JSONObject;
 
 public class APIHandler {
 
-    //private SpotifyApi api;
+    private SpotifyApi spotifyApi;
     private String androidID;
     private static APIHandler mInstance;
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
     private static Context mCtx;
     private String apiURL = "https://api.troubadour.tk";
+    private static Activity callingActivity;
+    private static final int canUseLocation = 1;
+    private TroubadourLocationManager troubadourLocationManager;
 
     public APIHandler(Context context){
         mCtx = context;
+        spotifyApi = new SpotifyApi();
+        troubadourLocationManager = new TroubadourLocationManager(mCtx);
         mRequestQueue = getRequestQueue();
         mImageLoader = new ImageLoader(mRequestQueue, new ImageLoader.ImageCache(){
             private final LruCache<String,Bitmap>
@@ -51,19 +64,45 @@ public class APIHandler {
             }
         });
         androidID = Settings.Secure.getString(mCtx.getContentResolver(), Settings.Secure.ANDROID_ID);
-        //api = new SpotifyApi();
+        //spotifyApi = new SpotifyApi();
     }
 
+    public APIHandler(Activity activity, Context context){
+        callingActivity = activity;
+        mCtx = context;
+        spotifyApi = new SpotifyApi();
+        troubadourLocationManager = new TroubadourLocationManager(mCtx);
+        mRequestQueue = getRequestQueue();
+        mImageLoader = new ImageLoader(mRequestQueue, new ImageLoader.ImageCache(){
+            private final LruCache<String,Bitmap>
+                    cache = new LruCache<String,Bitmap>(20);
+
+            @Override
+            public Bitmap getBitmap(String url){
+                return cache.get(url);
+            }
+
+            @Override
+            public void putBitmap(String url,Bitmap bitmap){
+                cache.put(url,bitmap);
+            }
+        });
+        androidID = Settings.Secure.getString(mCtx.getContentResolver(), Settings.Secure.ANDROID_ID);
+        //spotifyApi = new SpotifyApi();
+    }
+
+
+
     @SuppressWarnings("unused")
-    public static synchronized APIHandler getmInstance(Context context){
+    public static synchronized APIHandler getmInstance(Activity activity, Context context){
         if (mInstance == null){
-            mInstance = new APIHandler(context);
+            mInstance = new APIHandler(activity, context);
         }
         return mInstance;
     }
 
-    @SuppressWarnings("WeakerAccess")
-    public RequestQueue getRequestQueue(){
+
+    private RequestQueue getRequestQueue(){
         if(mRequestQueue == null){
             mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
         }
@@ -84,8 +123,7 @@ public class APIHandler {
 
 
     /* GET /Preferences for the Troubadour API with the androidID */
-    @SuppressWarnings("WeakerAccess")
-    public void getPreferences(final Response.Listener<JSONObject> callback,
+    private void getPreferences(final Response.Listener<JSONObject> callback,
                                final TroubadourRequestErrorHandler errHandler){
         TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(
                 Request.Method.GET,
@@ -106,8 +144,7 @@ public class APIHandler {
 
 
     /* PUT /Preferences for the Troubadour API with the androidID and a JSONObject selectedPreference */
-    @SuppressWarnings("WeakerAccess")
-    public void putPreferences(JSONArray selectedPreference,
+    private void putPreferences(JSONArray selectedPreference,
                                final Response.Listener<JSONObject> callback,
                                final TroubadourRequestErrorHandler errHandler) {
         TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.PUT,
@@ -129,8 +166,7 @@ public class APIHandler {
     }
 
     /* DELETE /Preferences for the Troubadour API with the androidID and an Array of Spotify URI strings */
-    @SuppressWarnings("WeakerAccess")
-    public void deletePreferences(String pref,
+    private void deletePreferences(String pref,
                                   final Response.Listener<JSONObject> callback,
                                   final TroubadourRequestErrorHandler errHandler) {
         TroubadourObjectRequest jsonArrayRequest = new TroubadourObjectRequest(Request.Method.DELETE,
@@ -154,8 +190,7 @@ public class APIHandler {
     }
 
     /* GET /Search for the Troubadour API with the androidID and a search string */
-    @SuppressWarnings("WeakerAccess")
-    public void getSearch(String searchQuery,
+    private void getSearch(String searchQuery,
                           final Response.Listener<JSONObject> callback,
                           final TroubadourRequestErrorHandler errHandler){
         TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.GET,
@@ -168,7 +203,7 @@ public class APIHandler {
 
     }
 
-    public void APIErrorHandler(TroubadourRequestError e){
+    private void APIErrorHandler(TroubadourRequestError e){
         Toast.makeText(mCtx, "Network Error", Toast.LENGTH_LONG).show();
         Log.e("TroubadourRequestError", e.toString());
     }
@@ -186,21 +221,111 @@ public class APIHandler {
         mRequestQueue.add(jsonObjectRequest);
     }
 
-    public void getNearby(String lat, String lon, String radius,
+    public void getNearby(String radius,
                           final Response.Listener<JSONObject> callback){
+
+        TroubadourLocationObject locationObject = troubadourLocationManager.getLocation();
+        String lat = locationObject.getLatitude().toString();
+        String lon = locationObject.getLongitude().toString();
         getNearby(lat, lon, radius, callback, (TroubadourRequestError e) -> APIErrorHandler(e));
     }
 
 
-    public void getNearby(String lat, String lon, String radius,
+    private void getNearby(String lat, String lon, String radius,
                           final Response.Listener<JSONObject> callback,
-                          final TroubadourRequestErrorHandler errorHandler){
+                          final TroubadourRequestErrorHandler errorHandler) {
         TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.GET,
                 apiURL + "/nearby?lat=" + lat + "&long=" + lon + "&radius=" + radius, callback, errorHandler
         );
         jsonObjectRequest
-                .setHeader("X-USER-ID",androidID)
-                .setHeader("Content-Type","application/json");
+                .setHeader("X-USER-ID", androidID)
+                .setHeader("Content-Type", "application/json");
         mRequestQueue.add(jsonObjectRequest);
     }
+
+    /* putPreferences Error Handler */
+    public void postPlaylist(String lat, String lon, String radius, String selectedPreferences[], String apiToken,
+                               final Response.Listener<JSONObject> callback) {
+        postPlaylist(lat, lon, radius, selectedPreferences, apiToken, callback, (TroubadourRequestError e) -> APIErrorHandler(e));
+    }
+
+
+    /* PUT /Preferences for the Troubadour API with the androidID and a JSONObject selectedPreference */
+    private void postPlaylist(String lat, String lon, String radius, String selectedPreferences[], String apiToken,
+                               final Response.Listener<JSONObject> callback,
+                               final TroubadourRequestErrorHandler errHandler) {
+        try {
+            JSONObject mBody = new JSONObject();
+            //JSONObject jLat = new JSONObject();
+            //JSONObject jLong = new JSONObject();
+            //JSONObject jRadius = new JSONObject();
+            //JSONObject jPlaylist = new JSONObject();
+            Double dLat = Double.parseDouble(lat);
+            Double dLon = Double.parseDouble(lon);
+            Double dRadius = Double.parseDouble(radius);
+            //jLat.put("lat", lat);
+            //jLong.put("long",lon);
+            //jRadius.put("radius",radius);
+            //jPlaylist.put("preferences",selectedPreferences);
+            mBody.put("lat",dLat);
+            mBody.put("long",dLon);
+            mBody.put("radius",dRadius);
+            //mBody.put(3,jPlaylist);
+
+            TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.POST,
+                    apiURL + "/playlist", mBody, callback, errHandler
+            );
+
+        Log.e("androidID",androidID);
+        Log.e("Put body:", mBody.toString());
+        jsonObjectRequest
+                .setHeader("X-USER-ID", androidID)
+                .setHeader("X-API-KEY", apiToken)
+                .setHeader("Content-Type", "application/json");
+        Log.e("JSONRequestObject PUT: ",jsonObjectRequest.toString());
+        mRequestQueue.add(jsonObjectRequest);
+
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void getSpotifyUserID(String accessToken){
+        getSpotifyUserIDHelper getSpotifyUserIDHelper = new getSpotifyUserIDHelper(accessToken);
+        getSpotifyUserIDHelper.execute();
+    }
+
+
+    private class getSpotifyUserIDHelper extends AsyncTask<Void,Void,String>{
+
+        private String mAccessCode;
+        public getSpotifyUserIDHelper(String accessCode){
+            mAccessCode = accessCode;
+        }
+
+        @Override
+        public String doInBackground(Void... params) {
+            spotifyApi.setAccessToken(mAccessCode);
+
+            SpotifyService spotifyService = spotifyApi.getService();
+            String userID = spotifyService.getMe().id;
+            return userID;
+        }
+
+        @Override
+        public void onPreExecute(){
+            super.onPreExecute();
+        }
+
+        @Override
+        public void onPostExecute(String result){
+            SharedPreferences sharedPreferences = callingActivity.getSharedPreferences("NearbyPreferences", Context.MODE_PRIVATE);
+            SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+            sharedPreferencesEditor.putString("spotifyUserid",result);
+            sharedPreferencesEditor.commit();
+            super.onPostExecute(result);
+        }
+
+    }
+
 }

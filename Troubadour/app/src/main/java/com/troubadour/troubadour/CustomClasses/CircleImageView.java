@@ -20,7 +20,6 @@ package com.troubadour.troubadour.CustomClasses;
  * limitations under the License.
  */
 
-import com.android.volley.toolbox.NetworkImageView;
 import com.troubadour.troubadour.R;
 
 import android.content.Context;
@@ -42,7 +41,6 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
 public class CircleImageView extends TroubadourNetworkImageView {
 

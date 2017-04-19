@@ -13,6 +13,10 @@ import org.json.JSONObject;
 
 public class LocationService {
 
+    private Location location;
+    private Double lat;
+    private Double lon;
+
     @TargetApi(15)
     public void updateLocation(Context context) {
         if ( Build.VERSION.SDK_INT >= 15 &&
@@ -21,7 +25,6 @@ public class LocationService {
             return;
         }
 
-        Location location;
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (locationManager == null) return;
         boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -34,16 +37,25 @@ public class LocationService {
             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             sendLocationUpdate(location, context);
         }
+        lat = location.getLatitude();
+        lon = location.getLongitude();
     }
 
     private void sendLocationUpdate(Location location, Context context) {
-        APIHandler api = new APIHandler(context);
+        APIHandler apiHandler = new APIHandler(context);
         JSONObject json = new JSONObject();
         try {
             json.put("lat", location.getLatitude());
             json.put("long", location.getLongitude());
-            api.putLocation(json);
+            apiHandler.putLocation(json);
         }
         catch (JSONException ex) {}
+    }
+
+    public double getLong(){
+        return lat;
+    }
+    public double getLat(){
+        return lon;
     }
 }

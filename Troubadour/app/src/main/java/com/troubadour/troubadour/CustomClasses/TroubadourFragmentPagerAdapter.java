@@ -1,5 +1,6 @@
 package com.troubadour.troubadour.CustomClasses;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,11 +18,9 @@ public class TroubadourFragmentPagerAdapter extends FragmentPagerAdapter {
 
     final int PAGE_COUNT = 3;
     private String tabTitles[] = new String[] { "Host Settings", "Home", "Enter Preferences" };
-    private Context context;
 
     public TroubadourFragmentPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
-        this.context = context;
     }
 
     @Override

@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/hostFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.troubadour.troubadour.Fragments.HostFragment">
@@ -14,19 +15,18 @@
 
     <RadioGroup
         android:id="@+id/radioTabs"
-        android:layout_gravity="center_horizontal"
-        android:background="?attr/colorBackgroundFloating"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        android:layout_gravity="center_horizontal"
+        android:background="?attr/colorBackgroundFloating"
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/radioButton"
             android:layout_width="65dp"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:text="RadioButton" />
+            android:text="RadioButton"
+            android:visibility="invisible" />
 
         <RadioButton
             android:id="@+id/nearbyRadioButton"
@@ -45,8 +45,8 @@
             android:id="@+id/radioButton2"
             android:layout_width="65dp"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:text="RadioButton" />
+            android:text="RadioButton"
+            android:visibility="invisible" />
 
         <RadioButton
             android:id="@+id/blacklistedRadioButton"
@@ -65,8 +65,8 @@
             android:id="@+id/radioButton3"
             android:layout_width="65dp"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:text="RadioButton" />
+            android:text="RadioButton"
+            android:visibility="invisible" />
 
     </RadioGroup>
 
