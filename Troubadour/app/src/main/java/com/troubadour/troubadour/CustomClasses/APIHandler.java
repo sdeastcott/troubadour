@@ -223,11 +223,14 @@ public class APIHandler {
 
     public void getNearby(String radius,
                           final Response.Listener<JSONObject> callback){
-
-        TroubadourLocationObject locationObject = troubadourLocationManager.getLocation();
-        String lat = locationObject.getLatitude().toString();
-        String lon = locationObject.getLongitude().toString();
-        getNearby(lat, lon, radius, callback, (TroubadourRequestError e) -> APIErrorHandler(e));
+        try {
+            TroubadourLocationObject locationObject = troubadourLocationManager.getLocation();
+            String lat = locationObject.getLatitude().toString();
+            String lon = locationObject.getLongitude().toString();
+            getNearby(lat, lon, radius, callback, (TroubadourRequestError e) -> APIErrorHandler(e));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
 
