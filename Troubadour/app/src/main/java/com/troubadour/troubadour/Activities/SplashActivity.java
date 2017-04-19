@@ -3,20 +3,15 @@ package com.troubadour.troubadour.Activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.Toast;
 
 import com.troubadour.troubadour.R;
 
-public class SplashActvity extends AppCompatActivity {
+public class SplashActivity extends AppCompatActivity {
 
     private static final int canUseLocation = 1;
     private Activity thisActivity;
@@ -57,7 +52,7 @@ public class SplashActvity extends AppCompatActivity {
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }finally{
-                    Intent intent = new Intent(SplashActvity.this, HomeActivity.class);
+                    Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
                     startActivity(intent);
                 }
             }

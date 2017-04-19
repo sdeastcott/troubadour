@@ -17,7 +17,7 @@
         android:layout_margin="1dp"
         android:theme="@style/Troubadour_1"
         android:contentDescription="@string/listRowAlbumImageDescription"
-        app:srcCompat="@mipmap/ic_launcher" />
+        app:srcCompat="@mipmap/troubadour_logo_notext_dark" />
 
     <LinearLayout
         android:layout_width="match_parent"

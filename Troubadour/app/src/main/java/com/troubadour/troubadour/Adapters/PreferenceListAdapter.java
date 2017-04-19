@@ -98,7 +98,7 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
                 artistNameView.setText(sObject.getSpotifySecondaryArtist());
 
                 if(sObject.getSpotifyImages() == null){
-                    Bitmap bm = getBitmapFromVectorDrawable(lContext, R.mipmap.ic_launcher);
+                    Bitmap bm = getBitmapFromVectorDrawable(lContext, R.mipmap.troubadour_logo_notext_dark_circle);
                     albumImageView.setLocalImageBitmap(bm);
                     albumImageView.setDefaultImageResId(R.mipmap.ic_blank);
                     albumImageView.setBackgroundColor(Color.argb(255,48,48,48));
@@ -106,7 +106,7 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
                 }else {
                     int lastImage = sObject.getSpotifyImages().size();
                     if (lastImage == 0) {
-                        Bitmap bm = getBitmapFromVectorDrawable(lContext, R.mipmap.ic_launcher);
+                        Bitmap bm = getBitmapFromVectorDrawable(lContext, R.mipmap.troubadour_logo_notext_dark_circle);
                         albumImageView.setLocalImageBitmap(bm);
                         albumImageView.setDefaultImageResId(R.mipmap.ic_blank);
                         albumImageView.setBackgroundColor(Color.argb(255,48,48,48));
@@ -135,7 +135,7 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
 
                 //Set text and download the 64x64 res image to set image
                 if(sObject.getSpotifyImages() == null) {
-                        Bitmap bm = getBitmapFromVectorDrawable(lContext, R.mipmap.ic_launcher);
+                        Bitmap bm = getBitmapFromVectorDrawable(lContext, R.mipmap.troubadour_logo_notext_dark_circle);
                         artistImageView.setDefaultImageResId(R.mipmap.ic_blank);
                         artistImageView.setLocalImageBitmap(bm);
                         artistImageView.setBackgroundColor(Color.BLACK);
@@ -143,7 +143,7 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
                 }else{
                     int lastImage = sObject.getSpotifyImages().size();
                     if (lastImage == 0) {
-                        Bitmap bm = getBitmapFromVectorDrawable(lContext, R.mipmap.ic_launcher);
+                        Bitmap bm = getBitmapFromVectorDrawable(lContext, R.mipmap.troubadour_logo_notext_dark_circle);
                         artistImageView.setLocalImageBitmap(bm);
                         artistImageView.setDefaultImageResId(R.mipmap.ic_blank);
                         artistImageView.setBackgroundColor(Color.argb(255,48,48,48));

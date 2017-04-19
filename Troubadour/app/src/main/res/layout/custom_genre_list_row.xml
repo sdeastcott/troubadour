@@ -16,7 +16,7 @@
         android:layout_height="64dp"
         android:layout_margin="1dp"
         android:contentDescription="@string/listRowGenreImageDescription"
-        app:srcCompat="@mipmap/ic_launcher" />
+        app:srcCompat="@mipmap/troubadour_logo_notext_dark_circle" />
 
     <TextView
         android:id="@+id/genreListRowNameView"

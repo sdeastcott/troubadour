@@ -4,8 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.troubadour.troubadour.Activities.SplashActvity">
+    tools:context="com.troubadour.troubadour.Activities.SplashActivity">
 
-    <include layout="@layout/content_splash_actvity" />
 
+    <include
+        layout="@layout/content_splash_actvity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </android.support.design.widget.CoordinatorLayout>
