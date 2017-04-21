@@ -132,7 +132,9 @@ public class HomeFragment extends Fragment {
         //String sLon  = lon.toString();
         String sLat = String.valueOf(33.2005847);
         String sLon = String.valueOf(-87.5228543);
-        String sRadius = String.valueOf(5000000);
+        SharedPreferences sharedPref = getContext().getSharedPreferences(
+                "Settings", Context.MODE_PRIVATE);
+        String sRadius = sharedPref.getString("Radius", "30");
 
         sharedPref = getActivity().getSharedPreferences("AuthenticationResponse", Context.MODE_PRIVATE);
         Token = sharedPref.getString("Token", null);

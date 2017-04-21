@@ -187,7 +187,9 @@ public class HostFragment extends Fragment {
     public void getNearbyPreferences(){
 
         //Get Radius from pref later
-        String radius = "500000000";
+        String radius = getContext()
+                .getSharedPreferences("Settings", Context.MODE_PRIVATE)
+                .getString("Radius", "30");
         apiHandler.getNearby(String.valueOf(radius),this::loadNearbyPreferences);
     }
 
