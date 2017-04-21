@@ -59,6 +59,10 @@ public class HomeActivity extends AppCompatActivity {
         if(id == R.id.action_settings){
            return true;
         }
+        if(id == R.id.activity_preference_list_action_help){
+            Intent helpIntent = new Intent(HomeActivity.this, HelpActivity.class);
+            startActivity(helpIntent);
+        }
         return super.onOptionsItemSelected(item);
     }
 

@@ -19,4 +19,6 @@
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_activity_splash_actvity">SplashActivity</string>
     <string name="generatePlaylistString">Generate Playlist</string>
+    <string name="title_activity_help">HelpActivity</string>
+    <string name="help">Help</string>
 </resources>

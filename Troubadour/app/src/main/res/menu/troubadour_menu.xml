@@ -16,5 +16,10 @@
         android:theme="@style/Troubadour_1"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/activity_preference_list_action_help"
+        android:theme="@style/Troubadour_1"
+        android:title="@string/help"
+        app:showAsAction="never" />
 
 </menu>
