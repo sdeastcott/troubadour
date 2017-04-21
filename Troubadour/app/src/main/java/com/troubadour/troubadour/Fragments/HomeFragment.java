@@ -74,23 +74,6 @@ public class HomeFragment extends Fragment {
         return fragView;
     }
 
-    //@Override
-    //public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater){
-        //menuInflater.inflate(R.menu.troubadour_menu, menu);
-        //menu.findItem(R.id.trashCanPreferenceListActionBar).setVisible(false);
-        //super.onCreateOptionsMenu(menu,menuInflater);
-    //}
-
-    //@Override
-    //public boolean onOptionsItemSelected(MenuItem item) {
-        //int id = item.getItemId();
-
-        //if (id == R.id.action_settings) {
-            //return true;
-        //}
-        //return super.onOptionsItemSelected(item);
-    //}
-
     public void initUI(){
 
         //Logout Button and Listender
@@ -231,7 +214,6 @@ public class HomeFragment extends Fragment {
             String userID = nearbyPreferences.getString("spotifyUserID",null);
 
             JSONObject jData = jObjectResult.getJSONObject("data");
-            //String resultURL = "https://open.spotify.com/user/" + jData.get("created_by").toString() + "/playlist/" + jData.get("playlist_id").toString();
             String resultURI = "spotify:playlist:" + jData.get("playlist_id").toString();
 
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(resultURI));

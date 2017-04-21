@@ -140,45 +140,6 @@ public class HostFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater){
-        prefMenu = menu;
-        prefMenuInflater = menuInflater;
-        prefMenuInflater.inflate(R.menu.troubadour_menu, menu);
-        prefMenu.findItem(R.id.trashCanPreferenceListActionBar).setVisible(false);
-        super.onCreateOptionsMenu(prefMenu,prefMenuInflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        if(id == R.id.trashCanPreferenceListActionBar) {
-            String strPref = "";
-            if (nearbyButton.isChecked()) {
-                for (String selectedPref : selectedNearbyPreferenceListItems) {
-                    strPref += selectedPref + ",";
-                }
-                strPref = strPref.substring(0,strPref.length()-1);
-                removeSelectedPreferences();
-            }else {
-                for (String selectedPref : selectedBlacklistPreferenceListItems){
-                    strPref += selectedPref + ",";
-                }
-                strPref = strPref.substring(0,strPref.length()-1);
-                apiHandler.deleteBlacklistPreferences(strPref,this::cleanUpDelete);
-            }
-
-            prefMenu.findItem(R.id.trashCanPreferenceListActionBar).setVisible(false);
-            return true;
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
         outState.putSerializable("nearbyPreferences",nearbyListItemsStrings);

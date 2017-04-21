@@ -116,7 +116,6 @@ public class HomeActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Troubadour");
         setSupportActionBar(toolbar);
-        setSupportActionBar(toolbar);
     }
 
     private class PermissionRequestor extends AsyncTask<Void,Void,Void> {

@@ -72,37 +72,6 @@ public class PreferencesFragment extends Fragment {
         //userPreferences.execute();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater){
-        prefMenuInflater = menuInflater;
-        prefMenu = menu;
-        prefMenuInflater.inflate(R.menu.troubadour_menu, prefMenu);
-        prefMenu.findItem(R.id.trashCanPreferenceListActionBar).setVisible(false);
-        super.onCreateOptionsMenu(prefMenu,prefMenuInflater);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        int id = item.getItemId();
-
-        if(id == R.id.action_settings){
-           return true;
-        }
-        if(id == R.id.trashCanPreferenceListActionBar){
-            String strPref = "";
-            for (String selectedPref : selectedPreferenceListItems) {
-                strPref += selectedPref + ",";
-            }
-
-            strPref = strPref.substring(0,strPref.length()-1);
-            apiHandler.deletePreferences(strPref, this::cleanUpDelete);
-            return true;
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     public void initUI(){
         preferenceListItems = new ArrayList<>();
         apiHandler = new APIHandler(getActivity(),getContext());
