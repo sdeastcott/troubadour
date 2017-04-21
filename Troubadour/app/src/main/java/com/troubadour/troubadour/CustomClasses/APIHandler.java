@@ -259,21 +259,12 @@ public class APIHandler {
                                final TroubadourRequestErrorHandler errHandler) {
         try {
             JSONObject mBody = new JSONObject();
-            //JSONObject jLat = new JSONObject();
-            //JSONObject jLong = new JSONObject();
-            //JSONObject jRadius = new JSONObject();
-            //JSONObject jPlaylist = new JSONObject();
             Double dLat = Double.parseDouble(lat);
             Double dLon = Double.parseDouble(lon);
             Double dRadius = Double.parseDouble(radius);
-            //jLat.put("lat", lat);
-            //jLong.put("long",lon);
-            //jRadius.put("radius",radius);
-            //jPlaylist.put("preferences",selectedPreferences);
             mBody.put("lat",dLat);
             mBody.put("long",dLon);
             mBody.put("radius",dRadius);
-            //mBody.put(3,jPlaylist);
 
             TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.POST,
                     apiURL + "/playlist", mBody, callback, errHandler
@@ -293,42 +284,65 @@ public class APIHandler {
         }
     }
 
-    public void getSpotifyUserID(String accessToken){
-        getSpotifyUserIDHelper getSpotifyUserIDHelper = new getSpotifyUserIDHelper(accessToken);
-        getSpotifyUserIDHelper.execute();
+     /* deletePreferences Error Handler */
+    public void deleteBlacklistPreferences(String prefs,
+                                  final Response.Listener<JSONObject> callback){
+        deleteBlacklistPreferences(prefs, callback, (TroubadourRequestError e) -> APIErrorHandler(e));
+    }
+
+    /* DELETE /Preferences for the Troubadour API with the androidID and an Array of Spotify URI strings */
+    private void deleteBlacklistPreferences(String prefs,
+                                  final Response.Listener<JSONObject> callback,
+                                  final TroubadourRequestErrorHandler errHandler) {
+        TroubadourObjectRequest jsonArrayRequest = new TroubadourObjectRequest(Request.Method.DELETE,
+                apiURL + "/user/blacklist?ids=" + prefs, callback, errHandler
+        );
+        jsonArrayRequest
+                .setHeader("X-USER-ID", androidID)
+                .setHeader("Content-Type", "application/json");
+        Log.e("Request DELETE: ", jsonArrayRequest.toString());
+        mRequestQueue.add(jsonArrayRequest);
+    }
+
+     /* getBlacklistPreferences Error Handler */
+    public void getBlacklistPreferences(final Response.Listener<JSONObject> callback){
+        getBlacklistPreferences(callback, (TroubadourRequestError e) -> APIErrorHandler(e));
+    }
+
+    /* /getBlacklistPreferences for the Troubadour API with the androidID*/
+    private void getBlacklistPreferences(final Response.Listener<JSONObject> callback, final TroubadourRequestErrorHandler errHandler) {
+        TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.GET,
+                apiURL + "/user/blacklist", callback, errHandler
+        );
+        jsonObjectRequest
+                .setHeader("X-USER-ID", androidID)
+                .setHeader("Content-Type", "application/json");
+        Log.e("Request GET: ", jsonObjectRequest.toString());
+        mRequestQueue.add(jsonObjectRequest);
+    }
+
+    /* putBlacklistPreferences Error Handler */
+    public void putBlacklistPreferences(JSONArray selectedPreference,
+                               final Response.Listener<JSONObject> callback) {
+        putBlacklistPreferences(selectedPreference, callback, (TroubadourRequestError e) -> APIErrorHandler(e));
     }
 
 
-    private class getSpotifyUserIDHelper extends AsyncTask<Void,Void,String>{
-
-        private String mAccessCode;
-        public getSpotifyUserIDHelper(String accessCode){
-            mAccessCode = accessCode;
-        }
-
-        @Override
-        public String doInBackground(Void... params) {
-            spotifyApi.setAccessToken(mAccessCode);
-
-            SpotifyService spotifyService = spotifyApi.getService();
-            String userID = spotifyService.getMe().id;
-            return userID;
-        }
-
-        @Override
-        public void onPreExecute(){
-            super.onPreExecute();
-        }
-
-        @Override
-        public void onPostExecute(String result){
-            SharedPreferences sharedPreferences = callingActivity.getSharedPreferences("NearbyPreferences", Context.MODE_PRIVATE);
-            SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-            sharedPreferencesEditor.putString("spotifyUserid",result);
-            sharedPreferencesEditor.commit();
-            super.onPostExecute(result);
-        }
-
+    /* PUT BlacklistPreferences for the Troubadour API with the androidID and a JSONObject selectedPreference */
+    private void putBlacklistPreferences(JSONArray selectedPreference,
+                                final Response.Listener<JSONObject> callback,
+                                final TroubadourRequestErrorHandler errHandler) {
+        TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.PUT,
+                apiURL + "/user/blacklist", selectedPreference, callback, errHandler
+        );
+        Log.e("androidID",androidID);
+        Log.e("Put body:", selectedPreference.toString());
+        jsonObjectRequest
+                .setHeader("X-USER-ID", androidID)
+                .setHeader("Content-Type", "application/json");
+        Log.e("JSONRequestObject PUT: ",jsonObjectRequest.toString());
+        mRequestQueue.add(jsonObjectRequest);
     }
+
 
 }

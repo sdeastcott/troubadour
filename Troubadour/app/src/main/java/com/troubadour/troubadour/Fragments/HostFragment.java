@@ -2,10 +2,12 @@ package com.troubadour.troubadour.Fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -20,11 +22,12 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import com.troubadour.troubadour.Activities.CreateBlacklistPreferenceActivity;
 import com.troubadour.troubadour.Adapters.PreferenceListAdapter;
 import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.CustomClasses.TroubadourLocationManager;
 import com.troubadour.troubadour.CustomClasses.SpotifyObject;
-import com.troubadour.troubadour.CustomClasses.TroubadourLocationObject;
 import com.troubadour.troubadour.R;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +45,8 @@ public class HostFragment extends Fragment {
     private ArrayList<SpotifyObject> nearbyListItems;
     private ArrayList<SpotifyObject> blacklistListItems;
     private ArrayList<SpotifyObject> toDeleteListItems;
-    private ArrayList<String> selectedPreferenceListItems;
+    private ArrayList<String> selectedNearbyPreferenceListItems;
+    private ArrayList<String> selectedBlacklistPreferenceListItems;
     private ArrayList<String> nearbyListItemsStrings;
     private TroubadourLocationManager troubadourLocationManager;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -50,6 +54,7 @@ public class HostFragment extends Fragment {
     private RadioGroup radioGroup;
     private RadioButton nearbyButton;
     private RadioButton blacklistButton;
+    private FloatingActionButton fab;
 
     public HostFragment() {
         // Required empty public constructor
@@ -63,10 +68,11 @@ public class HostFragment extends Fragment {
         setHasOptionsMenu(true);
 
         troubadourLocationManager = new TroubadourLocationManager(getContext());
-        apiHandler = new APIHandler(getActivity(),getContext());
+        apiHandler = new APIHandler(getActivity(), getContext());
         fragView = inflater.inflate(R.layout.fragment_host, container, false);
 
-        selectedPreferenceListItems = new ArrayList<>();
+        selectedNearbyPreferenceListItems = new ArrayList<>();
+        selectedBlacklistPreferenceListItems = new ArrayList<>();
         nearbyListItems = new ArrayList<>();
         blacklistListItems = new ArrayList<>();
         toDeleteListItems = new ArrayList<>();
@@ -74,7 +80,14 @@ public class HostFragment extends Fragment {
 
         nearbyButton = (RadioButton) fragView.findViewById(R.id.nearbyRadioButton);
         nearbyButton.setChecked(true);
+        initUI();
+        return fragView;
+    }
+
+    public void initUI(){
         blacklistButton = (RadioButton) fragView.findViewById(R.id.blacklistedRadioButton);
+        fab = (FloatingActionButton) fragView.findViewById(R.id.hostFAB);
+        fab.setVisibility(View.INVISIBLE);
 
         progressBar = (ProgressBar) fragView.findViewById(R.id.hostProgressBar);
 
@@ -92,31 +105,38 @@ public class HostFragment extends Fragment {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
                 if (checkedId == R.id.nearbyRadioButton) {
-                    selectedPreferenceListItems.clear();
+                    selectedNearbyPreferenceListItems.clear();
                     nearbyButton.setTextColor(Color.parseColor("#009625"));
                     blacklistButton.setTextColor(Color.parseColor("#FFFFFF"));
-                    if(nearbyListItems.size() == 0){
-                        getNearbyPreferences();
-                    }else{
-                        noReloadRefresh();
-                    }
+                    fab.setVisibility(View.INVISIBLE);
+                    getNearbyPreferences();
                 } else if (checkedId == R.id.blacklistedRadioButton) {
-                    selectedPreferenceListItems.clear();
+                    selectedNearbyPreferenceListItems.clear();
                     blacklistButton.setTextColor(Color.parseColor("#009625"));
                     nearbyButton.setTextColor(Color.parseColor("#FFFFFF"));
-                    if(blacklistListItems.size() == 0) {
-                        getBlacklistPreferences();
-                    }else{
-                        noReloadRefresh();
-                    };
+                    fab.setVisibility(View.VISIBLE);
+                    getBlacklistPreferences();
                 }
             }
         });
 
+        fab = (FloatingActionButton) fragView.findViewById(R.id.hostFAB);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Create and Start CreatePreferenceActivity
+                Intent preferenceIntent = new Intent(getActivity(), CreateBlacklistPreferenceActivity.class);
+                preferenceIntent.setClassName("com.troubadour.troubadour","com.troubadour.troubadour.Activities.CreateBlacklistPreferenceActivity");
+                getActivity().startActivity(preferenceIntent);
+            }
+        });
         loadListview();
+    }
 
-
-        return fragView;
+    @Override
+    public void onResume(){
+        super.onResume();
+        initUI();
     }
 
     @Override
@@ -135,14 +155,22 @@ public class HostFragment extends Fragment {
         if (id == R.id.action_settings) {
             return true;
         }
-        if(id == R.id.trashCanPreferenceListActionBar){
+        if(id == R.id.trashCanPreferenceListActionBar) {
             String strPref = "";
-            for (String selectedPref : selectedPreferenceListItems) {
-                strPref += selectedPref + ",";
+            if (nearbyButton.isChecked()) {
+                for (String selectedPref : selectedNearbyPreferenceListItems) {
+                    strPref += selectedPref + ",";
+                }
+                strPref = strPref.substring(0,strPref.length()-1);
+                removeSelectedPreferences();
+            }else {
+                for (String selectedPref : selectedBlacklistPreferenceListItems){
+                    strPref += selectedPref + ",";
+                }
+                strPref = strPref.substring(0,strPref.length()-1);
+                apiHandler.deleteBlacklistPreferences(strPref,this::cleanUpDelete);
             }
 
-            strPref = strPref.substring(0,strPref.length()-1);
-            removeSelectedPreferences();
             prefMenu.findItem(R.id.trashCanPreferenceListActionBar).setVisible(false);
             return true;
 
@@ -160,7 +188,7 @@ public class HostFragment extends Fragment {
         if (nearbyButton.isChecked()) {
             //Cant concurrently check if selected, delete and continue iterating
             //So it is split up
-            for (String item : selectedPreferenceListItems) {
+            for (String item : selectedNearbyPreferenceListItems) {
                 for (SpotifyObject spotifyObject : nearbyListItems){
                     if (spotifyObject.getSpotifyURI().equals(item)){
                         toDeleteListItems.add(spotifyObject);
@@ -204,8 +232,7 @@ public class HostFragment extends Fragment {
 
     public void getBlacklistPreferences(){
         //apiHandler
-        JSONObject jsonObject = new JSONObject();
-        loadBlacklistPreferences(jsonObject);
+        apiHandler.getBlacklistPreferences(this::loadBlacklistPreferences);
     }
 
     public void loadNearbyPreferences(JSONObject jsonObject){
@@ -363,19 +390,19 @@ public class HostFragment extends Fragment {
 
                 if(nearbyButton.isChecked()) {
                     SpotifyObject selectedItem = nearbyListItems.get(position);
-                    if (selectedPreferenceListItems.contains(selectedItem.getSpotifyURI())) {
+                    if (selectedNearbyPreferenceListItems.contains(selectedItem.getSpotifyURI())) {
                         lView.setItemChecked(position, false);
-                        selectedPreferenceListItems.remove(selectedItem.getSpotifyURI());
+                        selectedNearbyPreferenceListItems.remove(selectedItem.getSpotifyURI());
                     } else {
                         lView.setItemChecked(position, true);
-                        selectedPreferenceListItems.add(selectedItem.getSpotifyURI());
+                        selectedNearbyPreferenceListItems.add(selectedItem.getSpotifyURI());
                     }
 
                     //If the menu item for trash is not visible
                     MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
-                    if (selectedPreferenceListItems.isEmpty() & item.isVisible()) {
+                    if (selectedNearbyPreferenceListItems.isEmpty() & item.isVisible()) {
                         item.setVisible(false);
-                    } else if ((!selectedPreferenceListItems.isEmpty()) & (!item.isVisible())) {
+                    } else if ((!selectedNearbyPreferenceListItems.isEmpty()) & (!item.isVisible())) {
                         item.setVisible(true);
                     }
                 }
@@ -393,6 +420,7 @@ public class HostFragment extends Fragment {
     }
 
     public void loadBlacklistPreferences(JSONObject jsonObject){
+        blacklistListItems.clear();
         lView = (ListView) fragView.findViewById(R.id.prefNearbyListView);
 
         try {
@@ -543,21 +571,21 @@ public class HostFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                if(nearbyButton.isChecked()) {
-                    SpotifyObject selectedItem = nearbyListItems.get(position);
-                    if (selectedPreferenceListItems.contains(selectedItem.getSpotifyURI())) {
+                if(blacklistButton.isChecked()) {
+                    SpotifyObject selectedItem = blacklistListItems.get(position);
+                    if (selectedBlacklistPreferenceListItems.contains(selectedItem.getSpotifyURI())) {
                         lView.setItemChecked(position, false);
-                        selectedPreferenceListItems.remove(selectedItem.getSpotifyURI());
+                        selectedBlacklistPreferenceListItems.remove(selectedItem.getSpotifyURI());
                     } else {
                         lView.setItemChecked(position, true);
-                        selectedPreferenceListItems.add(selectedItem.getSpotifyURI());
+                        selectedBlacklistPreferenceListItems.add(selectedItem.getSpotifyURI());
                     }
 
                     //If the menu item for trash is not visible
                     MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
-                    if (selectedPreferenceListItems.isEmpty() & item.isVisible()) {
+                    if (selectedBlacklistPreferenceListItems.isEmpty() & item.isVisible()) {
                         item.setVisible(false);
-                    } else if ((!selectedPreferenceListItems.isEmpty()) & (!item.isVisible())) {
+                    } else if ((!selectedBlacklistPreferenceListItems.isEmpty()) & (!item.isVisible())) {
                         item.setVisible(true);
                     }
                 }
@@ -593,5 +621,11 @@ public class HostFragment extends Fragment {
         sharedPreferencesEditor.commit();
     }
 
-
+    public void cleanUpDelete(JSONObject jsonObject){
+        Log.e("DELETE Response:", jsonObject.toString());
+        lView.clearChoices();
+        MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
+        item.setVisible(false);
+        loadListview();
+    }
 }

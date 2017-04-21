@@ -30,19 +30,12 @@
             android:name=".Activities.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/Troubadour_1" />
-        <!--
-        <activity android:name=".Activities.NotMainActivity">
-            <intent-filter>
-                <action
-                    android:name="android.intent.action.MAIN"
-                    android:theme="@style/Troubadour_1" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        -->
         <activity
             android:name=".Activities.CreatePreferenceActivity"
+            android:label="@string/title_activity_create_preference"
+            android:theme="@style/Troubadour_1" />
+        <activity
+            android:name=".Activities.CreateBlacklistPreferenceActivity"
             android:label="@string/title_activity_create_preference"
             android:theme="@style/Troubadour_1" />
         <activity
@@ -64,7 +57,9 @@
             android:name=".Activities.HelpActivity"
             android:label="@string/title_activity_help"
             android:theme="@style/Troubadour_1" />
-        <activity android:name=".Activities.SettingsActivity"></activity>
+
+        <activity android:name=".Activities.SettingsActivity"
+            android:theme="@style/Troubadour_1"/>
     </application>
 
 </manifest>

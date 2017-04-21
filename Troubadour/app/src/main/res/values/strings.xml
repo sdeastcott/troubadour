@@ -96,4 +96,5 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="autoUpdate">Automatically Update Playlist</string>
     <string name="partyRadius">Party Radius</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>

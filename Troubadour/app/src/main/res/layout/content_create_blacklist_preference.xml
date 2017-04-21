@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/Troubadour_1"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.troubadour.troubadour.Activities.CreateBlacklistPreferenceActivity"
+    tools:showIn="@layout/activity_create_blacklist_preference">
+
+        <ProgressBar
+            android:id="@+id/createBlacklistPreferenceProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+        <EditText
+            android:id="@+id/prefSearchEditText"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:paddingLeft="10dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/rounded_edit_text"
+            android:ems="10"
+            android:hint="@string/Search"
+            android:imeOptions="actionSearch"
+            android:inputType="textPersonName"
+            android:textColorHint="@android:color/white"
+            android:theme="@style/Troubadour_1"
+            tools:ignore="RtlHardcoded,RtlSymmetry" />
+
+        <ListView
+            android:id="@+id/prefSearchResultsListView"
+            android:theme="@style/Troubadour_1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/prefSearchEditText"
+            android:layout_marginTop="10dp" />
+
+</RelativeLayout>
