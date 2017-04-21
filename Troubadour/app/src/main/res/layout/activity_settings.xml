@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.troubadour.troubadour.Activities.SettingsActivity">
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"
+        android:background="@color/troubadour_dark" />
+
+    <SeekBar
+        android:id="@+id/partyRadius"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/viewpager"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="200dp"
+        android:max="9"
+        android:progress="3" />
+
+    <TextView
+        android:id="@+id/partyRadiusText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="29dp"
+        android:text="Party Radius: "
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:layout_alignBottom="@+id/partyRadius"
+        android:layout_alignLeft="@+id/partyRadius"
+        android:layout_alignStart="@+id/partyRadius" />
+
+    <Switch
+        android:id="@+id/updatePlaylistSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/partyRadius"
+        android:layout_alignParentLeft="false"
+        android:layout_alignRight="@+id/partyRadius"
+        android:layout_below="@+id/viewpager"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="75dp"
+        android:checked="true"
+        android:switchTextAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:text="Automatically Update Playlist"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <TextView
+        android:id="@+id/radiusDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/partyRadiusText"
+        android:layout_alignBottom="@+id/partyRadiusText"
+        android:layout_marginLeft="14dp"
+        android:layout_marginStart="14dp"
+        android:layout_toEndOf="@+id/partyRadiusText"
+        android:layout_toRightOf="@+id/partyRadiusText"
+        android:text="40 meters"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+
+</RelativeLayout>

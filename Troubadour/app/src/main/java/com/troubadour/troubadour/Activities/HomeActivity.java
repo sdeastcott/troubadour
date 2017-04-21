@@ -55,9 +55,9 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         int id = item.getItemId();
-
-        if(id == R.id.action_settings){
-           return true;
+        if(id == R.id.activity_preference_list_action_settings){
+            Intent settingsIntent = new Intent(HomeActivity.this, SettingsActivity.class);
+            startActivity(settingsIntent);
         }
         if(id == R.id.activity_preference_list_action_help){
             Intent helpIntent = new Intent(HomeActivity.this, HelpActivity.class);

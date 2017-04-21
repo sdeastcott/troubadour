@@ -63,7 +63,8 @@
         <activity
             android:name=".Activities.HelpActivity"
             android:label="@string/title_activity_help"
-            android:theme="@style/Troubadour_1"></activity>
+            android:theme="@style/Troubadour_1" />
+        <activity android:name=".Activities.SettingsActivity"></activity>
     </application>
 
 </manifest>
