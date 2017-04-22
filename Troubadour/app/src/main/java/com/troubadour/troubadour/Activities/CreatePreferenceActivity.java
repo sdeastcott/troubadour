@@ -308,13 +308,15 @@ public class CreatePreferenceActivity extends AppCompatActivity {
                 //PostNewPreference newPref = new PostNewPreference(position);
                 //newPref.execute();
                 SpotifyObject selectedPreference = preferenceListItemArrayList.get(position);
-                try {
-                    JSONObject body = new JSONObject();
-                    body.put("spotify_uri", selectedPreference.getSpotifyURI());
-                    body.put("name",selectedPreference.getSpotifyName());
-                    PutPreference(body);
-                }catch(JSONException e){
-                    e.printStackTrace();
+                if(!selectedPreference.getSpotifyType().equals("display")) {
+                    try {
+                        JSONObject body = new JSONObject();
+                        body.put("spotify_uri", selectedPreference.getSpotifyURI());
+                        body.put("name", selectedPreference.getSpotifyName());
+                        PutPreference(body);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

@@ -48,6 +48,16 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
             initImageLoader();
         }
 
+        @Override
+        public boolean isEnabled(int position){
+            SpotifyObject sObject = lPreferenceListItem.get(position);
+            if(sObject.getSpotifyType().equals("display")){
+                return false;
+            }else{
+                return true;
+            }
+        }
+
         public int getCount() {
             return lPreferenceListItem.size();
         }
@@ -191,10 +201,6 @@ public class PreferenceListAdapter extends ArrayAdapter<SpotifyObject>{
 
         @Override
         public boolean areAllItemsEnabled(){
-            return true;
-        }
-
-        public boolean isEnabled(int arg0){
             return true;
         }
 

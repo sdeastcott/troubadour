@@ -118,6 +118,10 @@ public class HomeActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
+    public Menu getPrefMenu(){
+        return prefMenu;
+    }
+
     private class PermissionRequestor extends AsyncTask<Void,Void,Void> {
 
         public Void doInBackground(Void... params){

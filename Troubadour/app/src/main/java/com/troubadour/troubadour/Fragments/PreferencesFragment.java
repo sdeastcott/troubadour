@@ -16,6 +16,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.troubadour.troubadour.Activities.CreatePreferenceActivity;
+import com.troubadour.troubadour.Activities.HelpActivity;
+import com.troubadour.troubadour.Activities.HomeActivity;
+import com.troubadour.troubadour.Activities.SettingsActivity;
 import com.troubadour.troubadour.Adapters.PreferenceListAdapter;
 import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.CustomClasses.SpotifyObject;
@@ -65,6 +68,29 @@ public class PreferencesFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu,MenuInflater menuInflater){
+        prefMenuInflater = menuInflater;
+        prefMenu = menu;
+        //prefMenuInflater.inflate(R.menu.troubadour_menu, prefMenu);
+        super.onCreateOptionsMenu(menu,menuInflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+        if(id == R.id.trashCanPreferenceListActionBar) {
+            String strPref = "";
+            for (String selectedPref : selectedPreferenceListItems) {
+                strPref += selectedPref + ",";
+            }
+
+            strPref = strPref.substring(0,strPref.length()-1);
+            apiHandler.deletePreferences(strPref, this::cleanUpDelete);
+        }
+        return true;
+    }
+
+    @Override
     public void onResume(){
         super.onResume();
         initUI();
@@ -73,6 +99,7 @@ public class PreferencesFragment extends Fragment {
     }
 
     public void initUI(){
+        prefMenu = ((HomeActivity)getActivity()).getPrefMenu();
         preferenceListItems = new ArrayList<>();
         apiHandler = new APIHandler(getActivity(),getContext());
         fragView.findViewById(R.id.preferenceProgressBar).setVisibility(View.VISIBLE);
@@ -235,22 +262,23 @@ public class PreferencesFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 SpotifyObject selectedItem = preferenceListItems.get(position);
-                if(selectedPreferenceListItems.contains(selectedItem.getSpotifyURI())){
-                    lView.setItemChecked(position,false);
-                    selectedPreferenceListItems.remove(selectedItem.getSpotifyURI());
-                }else{
-                    lView.setItemChecked(position,true);
-                    selectedPreferenceListItems.add(selectedItem.getSpotifyURI());
-                }
+                if(!selectedItem.getSpotifyType().equals("display")) {
+                    if (selectedPreferenceListItems.contains(selectedItem.getSpotifyURI())) {
+                        lView.setItemChecked(position, false);
+                        selectedPreferenceListItems.remove(selectedItem.getSpotifyURI());
+                    } else {
+                        lView.setItemChecked(position, true);
+                        selectedPreferenceListItems.add(selectedItem.getSpotifyURI());
+                    }
 
-                //If the menu item for trash is not visible
-                MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
-                if(selectedPreferenceListItems.isEmpty() & item.isVisible()){
-                    item.setVisible(false);
-                }else if((!selectedPreferenceListItems.isEmpty()) & (!item.isVisible())){
-                    item.setVisible(true);
+                    //If the menu item for trash is not visible
+                    MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
+                    if (selectedPreferenceListItems.isEmpty() & item.isVisible()) {
+                        item.setVisible(false);
+                    } else if ((!selectedPreferenceListItems.isEmpty()) & (!item.isVisible())) {
+                        item.setVisible(true);
+                    }
                 }
-
             }
         });
         fragView.findViewById(R.id.preferenceProgressBar).setVisibility(View.INVISIBLE);

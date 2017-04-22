@@ -24,6 +24,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.troubadour.troubadour.Activities.CreateBlacklistPreferenceActivity;
+import com.troubadour.troubadour.Activities.HelpActivity;
+import com.troubadour.troubadour.Activities.SettingsActivity;
 import com.troubadour.troubadour.Adapters.PreferenceListAdapter;
 import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.CustomClasses.TroubadourLocationManager;
@@ -137,6 +139,34 @@ public class HostFragment extends Fragment {
     public void onResume(){
         super.onResume();
         initUI();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu,MenuInflater menuInflater){
+        prefMenuInflater = menuInflater;
+        prefMenu = menu;
+        //prefMenuInflater.inflate(R.menu.troubadour_menu, prefMenu);
+        super.onCreateOptionsMenu(menu,menuInflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+        if(id == R.id.trashCanPreferenceListActionBar) {
+            String strPref = "";
+            if(nearbyButton.isChecked()) {
+                for (String selectedPref : selectedNearbyPreferenceListItems) {
+                    strPref += selectedPref + ",";
+                }
+            }else if(nearbyButton.isChecked()){
+                for (String selectedPref : selectedBlacklistPreferenceListItems){
+                    strPref += selectedPref + ",";
+                }
+            }
+            strPref = strPref.substring(0,strPref.length()-1);
+            apiHandler.deletePreferences(strPref, this::cleanUpDelete);
+        }
+        return true;
     }
 
     @Override
@@ -353,24 +383,24 @@ public class HostFragment extends Fragment {
 
                 if(nearbyButton.isChecked()) {
                     SpotifyObject selectedItem = nearbyListItems.get(position);
-                    if (selectedNearbyPreferenceListItems.contains(selectedItem.getSpotifyURI())) {
-                        lView.setItemChecked(position, false);
-                        selectedNearbyPreferenceListItems.remove(selectedItem.getSpotifyURI());
-                    } else {
-                        lView.setItemChecked(position, true);
-                        selectedNearbyPreferenceListItems.add(selectedItem.getSpotifyURI());
-                    }
+                    if(!selectedItem.getSpotifyType().equals("display")) {
+                        if (selectedNearbyPreferenceListItems.contains(selectedItem.getSpotifyURI())) {
+                            lView.setItemChecked(position, false);
+                            selectedNearbyPreferenceListItems.remove(selectedItem.getSpotifyURI());
+                        } else {
+                            lView.setItemChecked(position, true);
+                            selectedNearbyPreferenceListItems.add(selectedItem.getSpotifyURI());
+                        }
 
-                    //If the menu item for trash is not visible
-                    MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
-                    if (selectedNearbyPreferenceListItems.isEmpty() & item.isVisible()) {
-                        item.setVisible(false);
-                    } else if ((!selectedNearbyPreferenceListItems.isEmpty()) & (!item.isVisible())) {
-                        item.setVisible(true);
+                        //If the menu item for trash is not visible
+                        MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
+                        if (selectedNearbyPreferenceListItems.isEmpty() & item.isVisible()) {
+                            item.setVisible(false);
+                        } else if ((!selectedNearbyPreferenceListItems.isEmpty()) & (!item.isVisible())) {
+                            item.setVisible(true);
+                        }
                     }
                 }
-                //if blacklist is checked
-
             }
         });
         progressBar.setVisibility(View.INVISIBLE);
@@ -536,23 +566,24 @@ public class HostFragment extends Fragment {
 
                 if(blacklistButton.isChecked()) {
                     SpotifyObject selectedItem = blacklistListItems.get(position);
-                    if (selectedBlacklistPreferenceListItems.contains(selectedItem.getSpotifyURI())) {
-                        lView.setItemChecked(position, false);
-                        selectedBlacklistPreferenceListItems.remove(selectedItem.getSpotifyURI());
-                    } else {
-                        lView.setItemChecked(position, true);
-                        selectedBlacklistPreferenceListItems.add(selectedItem.getSpotifyURI());
-                    }
+                    if(!selectedItem.getSpotifyType().equals("display")) {
+                        if (selectedBlacklistPreferenceListItems.contains(selectedItem.getSpotifyURI())) {
+                            lView.setItemChecked(position, false);
+                            selectedBlacklistPreferenceListItems.remove(selectedItem.getSpotifyURI());
+                        } else {
+                            lView.setItemChecked(position, true);
+                            selectedBlacklistPreferenceListItems.add(selectedItem.getSpotifyURI());
+                        }
 
-                    //If the menu item for trash is not visible
-                    MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
-                    if (selectedBlacklistPreferenceListItems.isEmpty() & item.isVisible()) {
-                        item.setVisible(false);
-                    } else if ((!selectedBlacklistPreferenceListItems.isEmpty()) & (!item.isVisible())) {
-                        item.setVisible(true);
+                        //If the menu item for trash is not visible
+                        MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
+                        if (selectedBlacklistPreferenceListItems.isEmpty() & item.isVisible()) {
+                            item.setVisible(false);
+                        } else if ((!selectedBlacklistPreferenceListItems.isEmpty()) & (!item.isVisible())) {
+                            item.setVisible(true);
+                        }
                     }
                 }
-                //if blacklist is checked
 
             }
         });
