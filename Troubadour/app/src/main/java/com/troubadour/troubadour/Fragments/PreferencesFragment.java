@@ -64,6 +64,7 @@ public class PreferencesFragment extends Fragment {
             }
         });
         initUI();
+        apiHandler.getPreferences(this::updateListView);
         return fragView;
     }
 
@@ -93,7 +94,8 @@ public class PreferencesFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        initUI();
+        //initUI();
+        apiHandler.getPreferences(this::updateListView);
         //GetUserPreferences userPreferences = new GetUserPreferences(apiURL);
         //userPreferences.execute();
     }
@@ -101,16 +103,17 @@ public class PreferencesFragment extends Fragment {
     public void initUI(){
         prefMenu = ((HomeActivity)getActivity()).getPrefMenu();
         preferenceListItems = new ArrayList<>();
+        selectedPreferenceListItems = new ArrayList<>();
         apiHandler = new APIHandler(getActivity(),getContext());
         fragView.findViewById(R.id.preferenceProgressBar).setVisibility(View.VISIBLE);
-        apiHandler.getPreferences(this::updateListView);
     }
 
     //Populates ListView with a given jsonArray
     //Convert jsonObject to SpotifyObject then adds to a ListArray<SpotifyObject>
     //Sets Adapter to the ListArray<SpotifyObject>
     public void updateListView(JSONObject jsonObject){
-        selectedPreferenceListItems = new ArrayList<>();
+        selectedPreferenceListItems.clear();
+        preferenceListItems.clear();
         lView = (ListView) fragView.findViewById(R.id.preferenceListView);
 
         try {
@@ -285,9 +288,9 @@ public class PreferencesFragment extends Fragment {
     }
 
     public void cleanUpDelete(JSONObject jsonObject){
+        selectedPreferenceListItems.clear();
         lView.clearChoices();
         MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
         item.setVisible(false);
-        initUI();
     }
 }
