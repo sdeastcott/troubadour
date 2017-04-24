@@ -97,4 +97,5 @@
     <string name="autoUpdate">Automatically Update Playlist</string>
     <string name="partyRadius">Party Radius</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="login">login</string>
 </resources>

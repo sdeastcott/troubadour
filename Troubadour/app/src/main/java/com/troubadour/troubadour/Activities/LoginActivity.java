@@ -48,11 +48,12 @@ public class LoginActivity extends Activity
 
             switch (response.getType()) {
                 case TOKEN:
+                    System.out.println("Valid TOKEN");
                     sendAuthentication(response);
                     break;
 
                 case ERROR:
-                    System.out.println(response.toString());
+                    System.out.println("SpotifyAPI Error: " + response.toString());
                     break;
 
 

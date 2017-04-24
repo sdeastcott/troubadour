@@ -6,14 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.util.TimeUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -36,6 +40,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.util.Date;
 
 
 /**
@@ -44,6 +50,7 @@ import java.io.InputStreamReader;
 public class HomeFragment extends Fragment {
 
     private int REQUEST_CODE = 1337;
+    private Date touchTime;
     private APIHandler apiHandler;
     private String CLIENT_ID;
     private String REDIRECT_URI = "troubadour://callback";
@@ -111,15 +118,34 @@ public class HomeFragment extends Fragment {
         }else {
             generatePlaylistButton.setAlpha(1f);
         }
+        /*
         generatePlaylistButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Token = sharedPref.getString("Token", null);
-                if(Token == null) {
-                    Toast.makeText(getActivity(), "Please Login to Spotify Premium in order to Generate a Playlist", Toast.LENGTH_SHORT).show();
-                }else {
-                    generatePlaylist();
+
+            }
+        });*/
+        generatePlaylistButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    generatePlaylistButton.setBackgroundResource(R.drawable.troubadour_logo_text_dark_stroke_highlight);
                 }
+                else if(event.getAction() == MotionEvent.ACTION_UP) {
+                    Date newTime = new Date();
+                    generatePlaylistButton.setBackgroundResource(R.drawable.troubadour_logo_text_dark_stroke);
+                    Token = sharedPref.getString("Token", null);
+                    if(Token == null) {
+                        Toast.makeText(getActivity(), "Please Login to Spotify Premium in order to Generate a Playlist", Toast.LENGTH_SHORT).show();
+                    }else if (touchTime == null){
+                        DateFormat.getDateTimeInstance().format(new Date());
+                        generatePlaylist();
+                    }else if ( ((touchTime.getTime()) - (newTime.getTime()) / 1000 % 60) < 5){
+                        generatePlaylist();
+                        touchTime = newTime;
+                    }
+                }
+                return true;
             }
         });
     }
