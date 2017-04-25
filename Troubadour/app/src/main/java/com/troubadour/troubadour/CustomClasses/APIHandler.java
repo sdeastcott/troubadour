@@ -277,6 +277,8 @@ public class APIHandler {
                 .setHeader("X-API-KEY", apiToken)
                 .setHeader("Content-Type", "application/json");
         Log.e("JSONRequestObject PUT: ",jsonObjectRequest.toString());
+        Log.e("PUT AndroidID: ",androidID);
+        Log.e("PUT APIToken: ",apiToken);
         mRequestQueue.add(jsonObjectRequest);
 
         }catch (JSONException e){

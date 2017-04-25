@@ -59,6 +59,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         CLIENT_ID = getCLIENT_ID();
         initUI();
+        if(Token != null) { switchUser(); }
         //PermissionRequestor permRequestor= new PermissionRequestor();
         //permRequestor.execute();
     }
@@ -72,7 +73,7 @@ public class HomeActivity extends AppCompatActivity {
         sharedPref = this.getSharedPreferences("AuthenticationResponse", Context.MODE_PRIVATE);
         Token = sharedPref.getString("Token", null);
         if(Token == null) { loginItem.setTitle("Log In"); }
-        else loginItem.setTitle("Switch User");
+        else {loginItem.setTitle("Switch User");}
 
         return true;
     }

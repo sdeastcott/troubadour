@@ -1,5 +1,7 @@
 package com.troubadour.troubadour.CustomClasses;
 
+import android.util.Log;
+
 import com.android.volley.VolleyError;
 
 import org.json.JSONException;
@@ -16,6 +18,11 @@ public class TroubadourRequestError extends Exception {
     public TroubadourRequestError(VolleyError e){
         super(e.getMessage());
         innerError = e;
+        if (innerError.networkResponse != null) {
+            if(innerError.networkResponse.headers != null) Log.e("Troub NetError Headers:", innerError.networkResponse.headers.toString());
+            if(innerError.networkResponse.data != null) Log.e("Troub NetError Data:", innerError.networkResponse.data.toString());
+            Log.e("Troub NetError Status", String.valueOf(innerError.networkResponse.statusCode));
+        }
     }
 
     public int getStatus(){
@@ -23,6 +30,10 @@ public class TroubadourRequestError extends Exception {
     }
 
     public JSONObject getResponseObject() throws JSONException {
+        Log.e("Troub NetError Headers:", innerError.networkResponse.headers.toString());
+        Log.e("Troub NetError Data:", innerError.networkResponse.data.toString());
+        Log.e("Troub NetError Status", String.valueOf(innerError.networkResponse.statusCode));
+        innerError.printStackTrace();
         return new JSONObject(new String(innerError.networkResponse.data));
     }
 

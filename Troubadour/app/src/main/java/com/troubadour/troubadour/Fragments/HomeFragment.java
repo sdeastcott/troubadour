@@ -123,10 +123,10 @@ public class HomeFragment extends Fragment {
         TroubadourLocationObject locationObject = troubadourLocationManager.getLocation();
         Double lat = locationObject.getLatitude();
         Double lon = locationObject.getLongitude();
-        //String sLat = lat.toString();
-        //String sLon  = lon.toString();
-        String sLat = String.valueOf(33.2005847);
-        String sLon = String.valueOf(-87.5228543);
+        String sLat = lat.toString();
+        String sLon  = lon.toString();
+        //String sLat = String.valueOf(33.2005847);
+        //String sLon = String.valueOf(-87.5228543);
         SharedPreferences sharedPref = getContext().getSharedPreferences(
                 "Settings", Context.MODE_PRIVATE);
         String sRadius = sharedPref.getString("Radius", "30");
