@@ -49,15 +49,9 @@ import java.util.Date;
  */
 public class HomeFragment extends Fragment {
 
-    private int REQUEST_CODE = 1337;
     private Date touchTime;
     private APIHandler apiHandler;
-    private String CLIENT_ID;
-    private String REDIRECT_URI = "troubadour://callback";
-    private String troubadourSecret =  "troubadourAPI.secret";
     private String Token;
-    private Button logoutButton;
-    private Button loginButton;
     private Button generatePlaylistButton;
     private SharedPreferences sharedPref;
     private TroubadourLocationManager troubadourLocationManager;
@@ -73,7 +67,6 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         setHasOptionsMenu(true);
 
-        CLIENT_ID = getCLIENT_ID();
         fragView = inflater.inflate(R.layout.fragment_home, container, false);
         troubadourLocationManager = new TroubadourLocationManager(getContext());
         apiHandler = new APIHandler(getActivity(),getContext());
@@ -82,30 +75,6 @@ public class HomeFragment extends Fragment {
     }
 
     public void initUI(){
-
-        //Logout Button and Listender
-        logoutButton = (Button) fragView.findViewById(R.id.logoutButton);
-        sharedPref = getActivity().getSharedPreferences("AuthenticationResponse", Context.MODE_PRIVATE);
-        Token = sharedPref.getString("Token", null);
-        if(Token == null) { logoutButton.setVisibility(View.GONE);}
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchUser();
-            }
-        });
-
-        //Login Button and Listener
-        loginButton = (Button) fragView.findViewById(R.id.loginButton);
-        sharedPref = getActivity().getSharedPreferences("AuthenticationResponse", Context.MODE_PRIVATE);
-        Token = sharedPref.getString("Token", null);
-        if(Token != null) { loginButton.setVisibility(View.GONE);}
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                login();
-            }
-        });
 
         //Generate Playlist Button and Listener
         generatePlaylistButton = (Button) fragView.findViewById(R.id.generatePlaylistButton);
@@ -168,70 +137,6 @@ public class HomeFragment extends Fragment {
         String prefs = nearbyPreferences.getString("NearbyPreferences", null);
         String prefsArr[] = prefs.split(",");
         apiHandler.postPlaylist(sLat, sLon, sRadius, prefsArr, Token, this::openInNewWindow);
-    }
-
-    private void switchUser() {
-        int REQUEST_CODE = 1337;
-        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(getCLIENT_ID(),
-                AuthenticationResponse.Type.TOKEN,
-                REDIRECT_URI);
-        builder.setShowDialog(true);
-        builder.setScopes(new String[]{"user-read-private", "streaming", "playlist-modify-public"});
-        AuthenticationRequest request = builder.build();
-        AuthenticationClient.openLoginActivity(getActivity(), REQUEST_CODE, request);
-    }
-
-    private void login() {
-        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
-                AuthenticationResponse.Type.TOKEN,
-                REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private", "streaming", "playlist-modify-public"});
-        AuthenticationRequest request = builder.build();
-        AuthenticationClient.openLoginActivity(getActivity(), REQUEST_CODE, request);
-    }
-
-    //Retrieves the ClientID from Spotify
-    public String getCLIENT_ID(){
-
-        // Reading json file from assets folder
-        BufferedReader br = null;
-        InputStream is;
-        AssetManager as;
-        String temp;
-        String input = "";
-
-        try {
-
-            //retrieves file from the assets folder
-            as = getActivity().getApplicationContext().getAssets();
-            is = as.open(troubadourSecret);
-            br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
-            while ((temp = br.readLine()) != null)
-                input += temp;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if ((br != null)) {
-                try {
-                    br.close(); // stop reading
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        try{
-
-            JSONObject jsonResponse = new JSONObject(input);
-            JSONArray jsonMainNode = jsonResponse.optJSONArray("spotifyAppCred");
-
-            JSONObject strClient = jsonMainNode.getJSONObject(0);
-            return strClient.optString("ClientID");
-        }
-        catch(JSONException e){
-            Toast.makeText(getActivity(), "Error"+e.toString(), Toast.LENGTH_SHORT).show();
-            return null;
-        }
     }
 
     public void openInNewWindow(JSONObject jObjectResult){

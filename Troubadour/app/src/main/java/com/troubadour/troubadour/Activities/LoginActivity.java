@@ -26,7 +26,6 @@ public class LoginActivity extends Activity
     private String CLIENT_ID;
     private String REDIRECT_URI = "troubadour://callback";
     private int REQUEST_CODE = 1337;
-    private Boolean isLoggedIn;
 
 
     @Override
@@ -63,15 +62,6 @@ public class LoginActivity extends Activity
         }
     }
 
-    public void clickListen(){
-        Button loginButton = (Button) findViewById(R.id.loginButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openLogin();
-            }
-        });
-    }
 
     private void openLogin() {
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,

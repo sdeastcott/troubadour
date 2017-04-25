@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,26 +20,44 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.R;
 import com.troubadour.troubadour.CustomClasses.TroubadourFragmentPagerAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class HomeActivity extends AppCompatActivity {
 
     private MenuInflater prefMenuInflater;
     private Menu prefMenu;
+    private MenuItem loginItem;
     private static final int canUseLocation = 1;
+    private int REQUEST_CODE = 1337;
+    private String CLIENT_ID;
+    private String REDIRECT_URI = "troubadour://callback";
+    private String troubadourSecret =  "troubadourAPI.secret";
+    private String Token;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        CLIENT_ID = getCLIENT_ID();
         initUI();
         //PermissionRequestor permRequestor= new PermissionRequestor();
         //permRequestor.execute();
@@ -49,6 +68,12 @@ public class HomeActivity extends AppCompatActivity {
         prefMenuInflater = getMenuInflater();
         prefMenu = menu;
         prefMenuInflater.inflate(R.menu.troubadour_menu, prefMenu);
+        loginItem = prefMenu.findItem(R.id.activity_preference_list_action_login);
+        sharedPref = this.getSharedPreferences("AuthenticationResponse", Context.MODE_PRIVATE);
+        Token = sharedPref.getString("Token", null);
+        if(Token == null) { loginItem.setTitle("Log In"); }
+        else loginItem.setTitle("Switch User");
+
         return true;
     }
 
@@ -62,6 +87,13 @@ public class HomeActivity extends AppCompatActivity {
         if(id == R.id.activity_preference_list_action_help){
             Intent helpIntent = new Intent(HomeActivity.this, HelpActivity.class);
             startActivity(helpIntent);
+        }
+        if(id == R.id.activity_preference_list_action_login) {
+            sharedPref = this.getSharedPreferences("AuthenticationResponse", Context.MODE_PRIVATE);
+            Token = sharedPref.getString("Token", null);
+            if(Token == null) { login(); }
+            else switchUser();
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -84,19 +116,16 @@ public class HomeActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putString("Token", response.getAccessToken());
                     editor.commit();
-                    Button loginButton = (Button) findViewById(R.id.loginButton);
-                    Button logoutButton = (Button) findViewById(R.id.logoutButton);
+                    loginItem.setTitle("Switch User");
                     Button generatePlaylistButton = (Button) findViewById(R.id.generatePlaylistButton);
-                    loginButton.setVisibility(View.GONE);
-                    logoutButton.setVisibility(View.VISIBLE);
                     generatePlaylistButton.setAlpha(1f);
+
 
                     break;
 
                 case ERROR:
                     System.out.println(response.toString());
                     break;
-
 
                 default:
                     //do nothing
@@ -157,6 +186,69 @@ public class HomeActivity extends AppCompatActivity {
                         canUseLocation
                 );
             }
+        }
+    }
+
+    private void login() {
+        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
+                AuthenticationResponse.Type.TOKEN,
+                REDIRECT_URI);
+        builder.setScopes(new String[]{"user-read-private", "streaming", "playlist-modify-public"});
+        AuthenticationRequest request = builder.build();
+        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+    }
+
+    private void switchUser() {
+        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
+                AuthenticationResponse.Type.TOKEN,
+                REDIRECT_URI);
+        builder.setShowDialog(true);
+        builder.setScopes(new String[]{"user-read-private", "streaming", "playlist-modify-public"});
+        AuthenticationRequest request = builder.build();
+        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+    }
+
+    //Retrieves the ClientID from Spotify
+    public String getCLIENT_ID(){
+
+        // Reading json file from assets folder
+        BufferedReader br = null;
+        InputStream is;
+        AssetManager as;
+        String temp;
+        String input = "";
+
+        try {
+
+            //retrieves file from the assets folder
+            as = this.getApplicationContext().getAssets();
+            is = as.open(troubadourSecret);
+            br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
+            while ((temp = br.readLine()) != null)
+                input += temp;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if ((br != null)) {
+                try {
+                    br.close(); // stop reading
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        try{
+
+            JSONObject jsonResponse = new JSONObject(input);
+            JSONArray jsonMainNode = jsonResponse.optJSONArray("spotifyAppCred");
+
+            JSONObject strClient = jsonMainNode.getJSONObject(0);
+            return strClient.optString("ClientID");
+        }
+        catch(JSONException e){
+            Toast.makeText(this, "Error"+e.toString(), Toast.LENGTH_SHORT).show();
+            return null;
         }
     }
 

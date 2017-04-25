@@ -21,5 +21,12 @@
         android:theme="@style/Troubadour_1"
         android:title="@string/help"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/activity_preference_list_action_login"
+        android:theme="@style/Troubadour_1"
+        android:title="Log In"
+        app:showAsAction="never" />
+
+
 
 </menu>

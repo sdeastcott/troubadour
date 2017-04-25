@@ -12,26 +12,6 @@
     tools:context="com.troubadour.troubadour.Activities.HomeActivity">
 
     <Button
-        android:id="@+id/loginButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="61dp"
-        android:text="@string/login"
-        android:theme="@style/Troubadour_1" />
-
-    <Button
-        android:id="@+id/logoutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="61dp"
-        android:text="@string/switchUser"
-        android:theme="@style/Troubadour_1" />
-
-    <Button
         android:id="@+id/generatePlaylistButton"
         android:src="@drawable/troubadour_logo_text_dark_stroke"
         android:background="@drawable/troubadour_logo_text_dark_stroke"
