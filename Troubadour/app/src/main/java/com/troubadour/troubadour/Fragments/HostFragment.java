@@ -89,8 +89,6 @@ public class HostFragment extends Fragment {
     public void initUI(){
         blacklistButton = (RadioButton) fragView.findViewById(R.id.blacklistedRadioButton);
         fab = (FloatingActionButton) fragView.findViewById(R.id.hostFAB);
-        fab.setVisibility(View.INVISIBLE);
-
         progressBar = (ProgressBar) fragView.findViewById(R.id.hostProgressBar);
 
         swipeRefreshLayout = (SwipeRefreshLayout) fragView.findViewById(R.id.host_swipeContainer);
@@ -121,6 +119,14 @@ public class HostFragment extends Fragment {
                 }
             }
         });
+
+        //Set fab visibility
+        int checkedButton = radioGroup.getCheckedRadioButtonId();
+        if(checkedButton == R.id.nearbyRadioButton){
+            fab.setVisibility(View.INVISIBLE);
+        }else if(checkedButton == R.id.blacklistedRadioButton){
+            fab.setVisibility(View.VISIBLE);
+        }
 
         fab = (FloatingActionButton) fragView.findViewById(R.id.hostFAB);
         fab.setOnClickListener(new View.OnClickListener() {
