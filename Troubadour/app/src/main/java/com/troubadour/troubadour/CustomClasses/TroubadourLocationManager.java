@@ -21,10 +21,15 @@ public class TroubadourLocationManager implements LocationListener{
 
     public TroubadourLocationManager(Context context){
         mContext = context;
+        locationManager = (android.location.LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
     }
 
     public void onLocationChanged(Location mLocation){
         location = mLocation;
+    }
+
+    public LocationManager getLocationManager(){
+        return locationManager;
     }
 
     public void onProviderDisabled(String provider){
@@ -45,7 +50,6 @@ public class TroubadourLocationManager implements LocationListener{
             return null;
         }
 
-        locationManager = (android.location.LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         if (locationManager == null) return null;
         boolean isGPSEnabled = locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER);
         boolean isNetworkEnabled = locationManager.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER);

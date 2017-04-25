@@ -2,11 +2,14 @@ package com.troubadour.troubadour.Fragments;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -120,23 +123,48 @@ public class HomeFragment extends Fragment {
     }
 
     public void generatePlaylist(){
-        TroubadourLocationObject locationObject = troubadourLocationManager.getLocation();
-        Double lat = locationObject.getLatitude();
-        Double lon = locationObject.getLongitude();
-        String sLat = lat.toString();
-        String sLon  = lon.toString();
-        //String sLat = String.valueOf(33.2005847);
-        //String sLon = String.valueOf(-87.5228543);
-        SharedPreferences sharedPref = getContext().getSharedPreferences(
-                "Settings", Context.MODE_PRIVATE);
-        String sRadius = sharedPref.getString("Radius", "30");
+        LocationManager lm = troubadourLocationManager.getLocationManager();
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+        try{
+            gps_enabled = lm.isProviderEnabled(lm.GPS_PROVIDER);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        try{
+            network_enabled = lm.isProviderEnabled(lm.NETWORK_PROVIDER);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!gps_enabled && !network_enabled){
+            AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+            dialog.setMessage("Please Enable Location or Network");
+            dialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }else {
+            TroubadourLocationObject locationObject = troubadourLocationManager.getLocation();
+            Double lat = locationObject.getLatitude();
+            Double lon = locationObject.getLongitude();
+            String sLat = lat.toString();
+            String sLon = lon.toString();
+            //String sLat = String.valueOf(33.2005847);
+            //String sLon = String.valueOf(-87.5228543);
+            SharedPreferences sharedPref = getContext().getSharedPreferences(
+                    "Settings", Context.MODE_PRIVATE);
+            String sRadius = sharedPref.getString("Radius", "30");
 
-        sharedPref = getActivity().getSharedPreferences("AuthenticationResponse", Context.MODE_PRIVATE);
-        Token = sharedPref.getString("Token", null);
-        SharedPreferences nearbyPreferences = getActivity().getSharedPreferences("NearbyPreferences", Context.MODE_PRIVATE);
-        String prefs = nearbyPreferences.getString("NearbyPreferences", null);
-        String prefsArr[] = prefs.split(",");
-        apiHandler.postPlaylist(sLat, sLon, sRadius, prefsArr, Token, this::openInNewWindow);
+            sharedPref = getActivity().getSharedPreferences("AuthenticationResponse", Context.MODE_PRIVATE);
+            Token = sharedPref.getString("Token", null);
+            SharedPreferences nearbyPreferences = getActivity().getSharedPreferences("NearbyPreferences", Context.MODE_PRIVATE);
+            String prefs = nearbyPreferences.getString("NearbyPreferences", null);
+            String prefsArr[] = prefs.split(",");
+            apiHandler.postPlaylist(sLat, sLon, sRadius, prefsArr, Token, this::openInNewWindow);
+        }
     }
 
     public void openInNewWindow(JSONObject jObjectResult){
@@ -160,4 +188,5 @@ public class HomeFragment extends Fragment {
         }
 
     }
+
 }

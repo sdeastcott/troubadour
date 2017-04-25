@@ -1,11 +1,15 @@
 package com.troubadour.troubadour.Fragments;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.IdRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -83,10 +87,37 @@ public class HostFragment extends Fragment {
         nearbyButton = (RadioButton) fragView.findViewById(R.id.nearbyRadioButton);
         nearbyButton.setChecked(true);
         initUI();
+        LocationManager lm = troubadourLocationManager.getLocationManager();
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+        try{
+            gps_enabled = lm.isProviderEnabled(lm.GPS_PROVIDER);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        try{
+            network_enabled = lm.isProviderEnabled(lm.NETWORK_PROVIDER);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!gps_enabled && !network_enabled) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+            dialog.setMessage("Please Enable Location or Network");
+            dialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent myIntent = new Intent (Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(myIntent);
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
         return fragView;
     }
 
     public void initUI(){
+
         blacklistButton = (RadioButton) fragView.findViewById(R.id.blacklistedRadioButton);
         fab = (FloatingActionButton) fragView.findViewById(R.id.hostFAB);
         progressBar = (ProgressBar) fragView.findViewById(R.id.hostProgressBar);
@@ -207,10 +238,10 @@ public class HostFragment extends Fragment {
 
     public void loadListview(){
         if(nearbyButton.isChecked()){
-            progressBar.setVisibility(View.VISIBLE);
-            nearbyButton.setTextColor(Color.parseColor("#009625"));
-            blacklistButton.setTextColor(Color.parseColor("#FFFFFF"));
-            getNearbyPreferences();
+                progressBar.setVisibility(View.VISIBLE);
+                nearbyButton.setTextColor(Color.parseColor("#009625"));
+                blacklistButton.setTextColor(Color.parseColor("#FFFFFF"));
+                getNearbyPreferences();
         }else if(blacklistButton.isChecked()){
             //do later
             progressBar.setVisibility(View.VISIBLE);
