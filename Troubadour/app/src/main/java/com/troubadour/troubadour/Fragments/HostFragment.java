@@ -195,13 +195,15 @@ public class HostFragment extends Fragment {
                 for (String selectedPref : selectedNearbyPreferenceListItems) {
                     strPref += selectedPref + ",";
                 }
-            }else if(nearbyButton.isChecked()){
+                removeSelectedPreferences();
+                 item.setVisible(false);
+            }else if(blacklistButton.isChecked()){
                 for (String selectedPref : selectedBlacklistPreferenceListItems){
                     strPref += selectedPref + ",";
                 }
+                strPref = strPref.substring(0,strPref.length()-1);
+                apiHandler.deleteBlacklistPreferences(strPref, this::cleanUpDelete);
             }
-            strPref = strPref.substring(0,strPref.length()-1);
-            apiHandler.deletePreferences(strPref, this::cleanUpDelete);
         }
         return true;
     }

@@ -286,5 +286,6 @@ public class PreferencesFragment extends Fragment {
         lView.clearChoices();
         MenuItem item = prefMenu.findItem(R.id.trashCanPreferenceListActionBar);
         item.setVisible(false);
+        apiHandler.getPreferences(this::updateListView);
     }
 }
