@@ -2,13 +2,8 @@ package com.troubadour.troubadour.CustomClasses;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.LruCache;
 import android.widget.Toast;
@@ -24,15 +19,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyService;
 
 /**
  * APIHandler is a central class that handles request to the Troubadour Server
  * Created by Blair Kiel on 3/6/2017.
  */
-
 public class APIHandler {
-
     private SpotifyApi spotifyApi;
     private String androidID;
     private static APIHandler mInstance;
@@ -63,8 +55,8 @@ public class APIHandler {
                 cache.put(url,bitmap);
             }
         });
+
         androidID = Settings.Secure.getString(mCtx.getContentResolver(), Settings.Secure.ANDROID_ID);
-        //spotifyApi = new SpotifyApi();
     }
 
     public APIHandler(Activity activity, Context context){
@@ -87,11 +79,9 @@ public class APIHandler {
                 cache.put(url,bitmap);
             }
         });
+
         androidID = Settings.Secure.getString(mCtx.getContentResolver(), Settings.Secure.ANDROID_ID);
-        //spotifyApi = new SpotifyApi();
     }
-
-
 
     @SuppressWarnings("unused")
     public static synchronized APIHandler getmInstance(Activity activity, Context context){
@@ -114,7 +104,7 @@ public class APIHandler {
         return mImageLoader;
     }
 
-    /*Begin Troubadour API Methods*/
+    /* Begin Troubadour API Methods */
 
     /* getPreferences Error Handler */
     public void getPreferences(final Response.Listener<JSONObject> callback) {
@@ -182,17 +172,22 @@ public class APIHandler {
     }
 
 
-
     /*  GET /Search Error Handler */
     public void getSearch(String searchQuery,
                           final Response.Listener<JSONObject> callback){
         getSearch(searchQuery, callback, (TroubadourRequestError e) -> APIErrorHandler(e));
     }
 
+    public void getSearch(String searchQuery, String preferenceType,
+                          final Response.Listener<JSONObject> callback){
+        getSearch(searchQuery, preferenceType, callback, (TroubadourRequestError e) -> APIErrorHandler(e));
+    }
+
     /* GET /Search for the Troubadour API with the androidID and a search string */
     private void getSearch(String searchQuery,
-                          final Response.Listener<JSONObject> callback,
-                          final TroubadourRequestErrorHandler errHandler){
+                           final Response.Listener<JSONObject> callback,
+                           final TroubadourRequestErrorHandler errHandler){
+
         TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.GET,
                 apiURL + "/search?q=" + searchQuery, callback, errHandler
         );
@@ -200,7 +195,21 @@ public class APIHandler {
                 .setHeader("X-USER-ID", androidID)
                 .setHeader("Content-Type","application/json");
         mRequestQueue.add(jsonObjectRequest);
+    }
 
+    /* GET /Search for the Troubadour API with the androidID, a search query, and preference type */
+    private void getSearch(String searchQuery,
+                           String preferenceType,
+                           final Response.Listener<JSONObject> callback,
+                           final TroubadourRequestErrorHandler errHandler){
+
+        TroubadourObjectRequest jsonObjectRequest = new TroubadourObjectRequest(Request.Method.GET,
+                apiURL + "/search?q=" + searchQuery + "&type=" + preferenceType, callback, errHandler
+        );
+        jsonObjectRequest
+                .setHeader("X-USER-ID", androidID)
+                .setHeader("Content-Type","application/json");
+        mRequestQueue.add(jsonObjectRequest);
     }
 
     private void APIErrorHandler(TroubadourRequestError e){
@@ -343,6 +352,4 @@ public class APIHandler {
         Log.e("JSONRequestObject PUT: ",jsonObjectRequest.toString());
         mRequestQueue.add(jsonObjectRequest);
     }
-
-
 }
