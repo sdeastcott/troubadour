@@ -24,7 +24,7 @@
     <item
         android:id="@+id/activity_preference_list_action_login"
         android:theme="@style/Troubadour_1"
-        android:title="Log In"
+        android:title="Switch User"
         app:showAsAction="never" />
 
 

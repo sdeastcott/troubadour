@@ -10,6 +10,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -33,12 +35,16 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.troubadour.troubadour.CustomClasses.APIHandler;
+import com.troubadour.troubadour.Fragments.HomeFragment;
 import com.troubadour.troubadour.R;
 import com.troubadour.troubadour.CustomClasses.TroubadourFragmentPagerAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static com.troubadour.troubadour.R.id.fragment_home;
+import static com.troubadour.troubadour.R.id.loginButton;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -71,8 +77,8 @@ public class HomeActivity extends AppCompatActivity {
         loginItem = prefMenu.findItem(R.id.activity_preference_list_action_login);
         sharedPref = this.getSharedPreferences("AuthenticationResponse", Context.MODE_PRIVATE);
         Token = sharedPref.getString("Token", null);
-        if(Token == null) { loginItem.setTitle("Log In"); }
-        else loginItem.setTitle("Switch User");
+        if(Token == null) { loginItem.setVisible(false); }
+        else loginItem.setVisible(true);
 
         return true;
     }
@@ -89,11 +95,7 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(helpIntent);
         }
         if(id == R.id.activity_preference_list_action_login) {
-            sharedPref = this.getSharedPreferences("AuthenticationResponse", Context.MODE_PRIVATE);
-            Token = sharedPref.getString("Token", null);
-            if(Token == null) { login(); }
-            else switchUser();
-
+            switchUser();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -116,11 +118,9 @@ public class HomeActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putString("Token", response.getAccessToken());
                     editor.commit();
-                    loginItem.setTitle("Switch User");
                     Button generatePlaylistButton = (Button) findViewById(R.id.generatePlaylistButton);
                     generatePlaylistButton.setAlpha(1f);
-
-
+                    loginItem.setVisible(true);
                     break;
 
                 case ERROR:
@@ -189,14 +189,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private void login() {
-        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
-                AuthenticationResponse.Type.TOKEN,
-                REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private", "streaming", "playlist-modify-public"});
-        AuthenticationRequest request = builder.build();
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
-    }
+
 
     private void switchUser() {
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,

@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+import com.troubadour.troubadour.Activities.HomeActivity;
 import com.troubadour.troubadour.CustomClasses.APIHandler;
 import com.troubadour.troubadour.CustomClasses.TroubadourLocationManager;
 import com.troubadour.troubadour.CustomClasses.TroubadourLocationObject;
@@ -54,11 +55,16 @@ public class HomeFragment extends Fragment {
 
     private Date touchTime;
     private APIHandler apiHandler;
-    private String Token;
     private Button generatePlaylistButton;
-    private SharedPreferences sharedPref;
+    private Button loginButton;
     private TroubadourLocationManager troubadourLocationManager;
     private View fragView;
+
+    private int REQUEST_CODE = 1337;
+    private String CLIENT_ID;
+    private String REDIRECT_URI = "troubadour://callback";
+    private String Token;
+    private SharedPreferences sharedPref;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -73,14 +79,24 @@ public class HomeFragment extends Fragment {
         fragView = inflater.inflate(R.layout.fragment_home, container, false);
         troubadourLocationManager = new TroubadourLocationManager(getContext());
         apiHandler = new APIHandler(getActivity(),getContext());
+        CLIENT_ID = ((HomeActivity) getActivity()).getCLIENT_ID();
         initUI();
         return fragView;
     }
 
-    public void initUI(){
+    @Override
+    public void onResume() {
+        sharedPref = getActivity().getSharedPreferences("AuthenticationResponse", Context.MODE_PRIVATE);
+        Token = sharedPref.getString("Token", null);
+        if(Token == null) { loginButton.setVisibility(View.VISIBLE); }
+        else loginButton.setVisibility(View.INVISIBLE);
+        super.onResume();
+    }
 
+    public void initUI(){
         //Generate Playlist Button and Listener
         generatePlaylistButton = (Button) fragView.findViewById(R.id.generatePlaylistButton);
+        loginButton = (Button) fragView.findViewById(R.id.loginButton);
         sharedPref = getActivity().getSharedPreferences("AuthenticationResponse", Context.MODE_PRIVATE);
         Token = sharedPref.getString("Token", null);
         Log.e("Spotify APIToken","Token is: " + Token);
@@ -90,13 +106,7 @@ public class HomeFragment extends Fragment {
         }else {
             generatePlaylistButton.setAlpha(1f);
         }
-        /*
-        generatePlaylistButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });*/
         generatePlaylistButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -118,6 +128,13 @@ public class HomeFragment extends Fragment {
                     }
                 }
                 return true;
+            }
+        });
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                login();
             }
         });
     }
@@ -188,5 +205,18 @@ public class HomeFragment extends Fragment {
         }
 
     }
+
+
+
+
+    private void login() {
+        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
+                AuthenticationResponse.Type.TOKEN,
+                REDIRECT_URI);
+        builder.setScopes(new String[]{"user-read-private", "streaming", "playlist-modify-public"});
+        AuthenticationRequest request = builder.build();
+        AuthenticationClient.openLoginActivity(getActivity(), REQUEST_CODE, request);
+    }
+
 
 }
