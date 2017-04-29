@@ -1,18 +1,18 @@
 # Troubadour 
+A modern day problem that many people face is having to endure a party host's terrible taste in music. Troubadour seeks to give the world a comprehensive solution to this problem by generating an optimized playlist based off the preferences of party attendees. Powered by Spotify's API, we can instantly generate a playlist that everyone will enjoy.
 
-A modern day problem that many people face is having to endure a party host’s ***terrible*** taste in music. Troubadour seeks to give users a comprehensive solution to this by generating an optimized playlist based off nearby users' preferences. This will be done by passing the preferences to the Spotify API which will return a generated playlist the host can play.
+Troubadour is an Android application backed by a NodeJS server and a PostgreSQL database. We provide an interface for entering music preferences as well as an interface for generating a party playlist. Using location data and PostGIS, we are able to aggregate the preferences of all users within a closed area and generate a playlist.
+
 
 ## Quick-Start Guide
 
-Troubadour targets two user types, a Host User and a Non-host User.  
+Troubadour will have two types of users: 'host' users and 'non-host' users.
 
-+ The Host User seeks to gather the music preferences of nearby Troubadour users, then play the generated playlist on his/her Spotify App.  
++ The 'host' user has the ability to gather preferences from other nearby Troubadour users. With the click of a button, a playlist will be generated based off what was collected.
 
-	+ Quick-Start Playlist Generation- Simply gathers the music preferences of Nearby Troubadour users, then creates a Spotify Playlist from those collected music preferences.
+	+ Quick-Start Playlist Generation - Click 'Generate Playlist'. Troubadour will collect all nearby preferences, determine which preferences best fit the crowd, and generate a playlist.
 
-	+ Advanced Playlist Generation- Allows more control for a Host User before the playlist is generated.  The Host User can filter the music preferences of nearby Troubadour users before sending them generating a playlist.  This allows for a more finely-tuned playlist.
+	+ Advanced Playlist Generation - The same workflow as above, however the host can delete preferences or even forever blacklist them.
 
-+ The Non-host User simply wishes to set their prefered music preferences, then have them collected at a Party.
-
-	+ Enter Preferences- Allows for a Troubadour user to search through Spotify's music library to add to their list of Troubadour music preferences.
++ The 'non-host' user simply enters their favorite preferences and allows them to be collected at a party. They can browse Spotify's music library inside our app and add artists, tracks, albums, and genres. If you never plan on hosting a party, you can set your preferences and never have to open Troubadour again.
 
