@@ -1,69 +1,107 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-        <title>Home</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <link rel="stylesheet" href="css/styles.css"/>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    </head>
+  <head>
+    <title>Home</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  </head>
 
-    <body>
-        <header>
-            <nav id="navbar-primary" class="navbar navbar-default" role="navigation">
-                <div class="container">
+  <body>
+    <header>
+      <nav id="navbar-primary" class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">Troubadour</a>
+          </div>
+        </div>
+      </nav>
+    </header>
 
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-primary-collapse">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <a class="navbar-brand" href="#">Troubadour</a>
-                    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h2>Project Description</h2>
+          <div class="divider"></div>
+          <p>A modern day problem that many people face is having to endure a party host's terrible taste in music.
+             Troubadour seeks to give the world a comprehensive solution to this by generating an optimized playlist
+             based off the preferences of party attendees. Powered by Spotify's API, we can instantly generate a
+             playlist that everyone will enjoy.
+          </p>
+        </div>
 
-                    <div class="collapse navbar-collapse">
-                        <ul class="nav navbar-nav navbar-left">
-                            <li class="active"><a href="#">Project</a></li>
-                            <li><a href="team.html">The Team</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        </header>
+        <div class="col-md-6">
+          <h2>Project Scope</h2>
+          <div class="divider"></div>
+          <p>Troubadour is an Android application, backed by a NodeJS server, and PostgreSQL database. We provide
+             an interface for entering music preferences as well as an interface for generating a party playlist.
+             We implement an algorithm to aggregate music preferences for playlist generation.
+          </p>
 
-        <section id="description">
-            <div class="container">
-                <h2>Project Description</h2>
-                <div class="divider"></div>
-                <p>A modern day problem that many people face is having to endure a party host's terrible taste in music.
-                    Troubadour seeks to give the world a comprehensive solution to this by generating an optimized playlist
-                    based off the preferences of party attendees. Powered by Spotify's API, we can instantly generate a
-                    playlist that everyone will enjoy.
-                </p>
-        </section>
+        </div>
+      </div>
+    </div>
 
-        <section id="scope">
-            <div class="container">
-                <h2>Project Scope</h2>
-                <div class="divider"></div>
-                <p>Troubadour consists of an Android application, a backend server, and a database server. We will provide
-                    an interface for entering music preferences as well as an interface for generating a party playlist.
-                    We will implement an algorithm to aggregate musicp references for playlist generation.
-                </p>
-        </section>
+    <div class="container">
+      <h2>Demo Video</h2>
+      <div class="divider"></div>
+      <iframe src="https://drive.google.com/file/d/0B9lD79gAR6ntU3k0a1JJSGRBYU0/preview" width="1024" height="526"></iframe> 
+    </div>
+    <br>
 
-        <section id="downloads">
-            <div class="container">
-                <h2>Downloads</h2>
-                <div class="divider"></div>
-                <ul class="list-style">
-                    <li><a href="https://drive.google.com/open?id=15P5KYReXkZwnGX352lNdw2y2rcwT-UUPgFJrkY6tvTw">Pitch Presentation</a></li>
-                    <li><a href="https://drive.google.com/open?id=1nLzTFJDMoz1w4sXGf1G5lONxpmdibJSbd5fgwxqwqwU">Software Requirements Document</a></li>
-                    <li><a href="https://drive.google.com/open?id=1Gu8QJnCu3zbcxbCuADKhWBrRRoVKHNozaro2A4YGAIo">Design Presentation</a></li>
-                </ul>
-        </section>
+    <div class="container">
+      <h2>The Team</h2>
+      <div class="divider"></div>
+      <div class="row">
+        <div class="col-md-3">
+          <h3 style="margin-top: 5px">Marcus Hill</h3>
+          <p>The mastermind and architect of our robust backend server. After graduation, he's headed to Raleigh to work for IBM.</p>
+        </div>
 
-    </body>
+        <div class="col-md-3">
+          <h3 style="margin-top: 5px">Steven Eastcott</h3>
+          <p>Jack of a few trades, master of none. This summer, he's interning for IBM in San Francisco. He's set to graduate in December.</p>
+        </div>
+
+        <div class="col-md-3">
+          <h3 style="margin-top: 5px">Blair Kiel</h3>
+          <p>Climbed Mount Everest with the Android project on his back. After graduation, he's headed to Huntsville to work for SAIC.</p>
+        </div>
+
+        <div class="col-md-3" >
+          <h3 style="margin-top: 5px">Justin Lichtle</h3>
+          <p>Head of security and authentication. After graduation, he's headed to Indianapolis to work for Flexware Innovation.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>Downloads</h2>
+      <div class="divider"></div>
+      <div class="row">
+        <div class="col-md-12">
+          <a style="margin-right: 2%; width: 23%" class="btn btn-default" href="https://docs.google.com/presentation/d/15P5KYReXkZwnGX352lNdw2y2rcwT-UUPgFJrkY6tvTw" role="button">
+            Pitch Presentation
+          </a>
+
+          <a style="margin-right: 2%; width: 23%" class="btn btn-default" href="https://docs.google.com/presentation/d/1Gu8QJnCu3zbcxbCuADKhWBrRRoVKHNozaro2A4YGAIo" role="button">
+            Design Presentation
+          </a>
+
+          <a style="width: 23%" class="btn btn-default" href="https://docs.google.com/document/d/1nLzTFJDMoz1w4sXGf1G5lONxpmdibJSbd5fgwxqwqwU" role="button">
+            Design Document
+          </a>
+
+          <a style="margin-left: 2%; width: 23%" class="btn btn-default" href="https://docs.google.com/presentation/d/15JHipKdOdpi9pa8JtGeOlAaG_jFlC56w0hwKSPJTrmg" role="button">
+            Final Presentation
+          </a>
+        </div>
+      </div>
+    </div>
+
+  <br><br><br>
+  <section class="footer" style="text-align: center; font-size: 13px"><p>Troubadour &trade;</p></section>
+
+  </body>
 </html>
