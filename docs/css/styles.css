@@ -19,6 +19,9 @@ li {
     font-family: 'Source Sans Pro', sans-serif;
 }
 
+a {
+    color: inherit;
+}
 
 .divider {
     border-color: #333;
