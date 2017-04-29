@@ -12,20 +12,23 @@ public class SpotifyObject {
     private String spotifyURI; //spotify:track:6rqhFgbbKwnb9MLmUQDhG6
     private String spotifyURL; //http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6
     private String spotifyID;  //6rqhFgbbKwnb9MLmUQDhG6
+    private String spotifyType;
+    private ArrayList<String> spotifyImages;
     private String spotifyName;
     private String spotifySecondaryArtist;
-    private String spotifyType;
-    private ArrayList<String> spotifyImages = new ArrayList<>();
+
 
     public SpotifyObject(){
         this.spotifyURI = "";
         this.spotifyURL = "";
         this.spotifyID = "";
-        this.spotifyName = "";
         this.spotifyType = "";
+        this.spotifyImages = new ArrayList<>();
+        this.spotifyName = "";
         this.spotifySecondaryArtist = "";
     }
-    public SpotifyObject(String spotURI, String spotURL, String spotID, String spotType, ArrayList<String> spotImages, String spotName, String spotSecondaryArtist){
+
+    public SpotifyObject(String spotURI, String spotURL, String spotID, String spotType, ArrayList<String> spotImages, String spotName, String spotSecondaryArtist) {
         this();
         this.spotifyURI = spotURI;
         this.spotifyURL = spotURL;
@@ -35,6 +38,7 @@ public class SpotifyObject {
         this.spotifyName = spotName;
         this.spotifySecondaryArtist = spotSecondaryArtist;
     }
+
     public String getSpotifyURI() {
         return spotifyURI;
     }
